@@ -1,0 +1,22 @@
+Creating test database for alias 'default'...
+E../home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/rest_framework/pagination.py:198: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'apps.work_orders.models.work_order.WorkOrder'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+.
+======================================================================
+ERROR: tests (unittest.loader._FailedTest.tests)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: tests
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/unittest/loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'apps.users.tests'
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 4.567s
+
+FAILED (errors=1)
+Destroying test database for alias 'default'...
+Found 4 test(s).
+System check identified no issues (0 silenced).

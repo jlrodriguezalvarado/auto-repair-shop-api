@@ -1,0 +1,64 @@
+Creating test database for alias 'default'...
+Found 3 test(s).
+Traceback (most recent call last):
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/db/migrations/loader.py", line 189, in check_key
+    return self.graph.root_nodes(key[0])[0]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/manage.py", line 23, in <module>
+    main()
+  File "/app/manage.py", line 19, in main
+    execute_from_command_line(sys.argv)
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/core/management/__init__.py", line 443, in execute_from_command_line
+    utility.execute()
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/core/management/__init__.py", line 437, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/core/management/commands/test.py", line 24, in run_from_argv
+    super().run_from_argv(argv)
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/core/management/base.py", line 420, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/core/management/base.py", line 464, in execute
+    output = self.handle(*args, **options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/core/management/commands/test.py", line 63, in handle
+    failures = test_runner.run_tests(test_labels)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/test/runner.py", line 1127, in run_tests
+    old_config = self.setup_databases(
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/test/runner.py", line 1026, in setup_databases
+    return _setup_databases(
+           ^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/test/utils.py", line 207, in setup_databases
+    connection.creation.create_test_db(
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/db/backends/base/creation.py", line 85, in create_test_db
+    call_command(
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/core/management/__init__.py", line 195, in call_command
+    return command.execute(*args, **defaults)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/core/management/base.py", line 464, in execute
+    output = self.handle(*args, **options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/core/management/base.py", line 111, in wrapper
+    res = handle_func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/core/management/commands/migrate.py", line 114, in handle
+    executor = MigrationExecutor(connection, self.migration_progress_callback)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/db/migrations/executor.py", line 18, in __init__
+    self.loader = MigrationLoader(self.connection)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/db/migrations/loader.py", line 59, in __init__
+    self.build_graph()
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/db/migrations/loader.py", line 305, in build_graph
+    self.add_external_dependencies(key, migration)
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/db/migrations/loader.py", line 216, in add_external_dependencies
+    parent = self.check_key(parent, key[0])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages/django/db/migrations/loader.py", line 196, in check_key
+    raise ValueError(
+ValueError: Dependency on app with no migrations: users
