@@ -1,0 +1,44 @@
+Migrations for 'catalog':
+  apps/catalog/migrations/0001_initial.py
+    + Create model ServiceCatalog
+Migrations for 'company':
+  apps/company/migrations/0001_initial.py
+    + Create model Company
+Migrations for 'customers':
+  apps/customers/migrations/0001_initial.py
+    + Create model CustomerProfile
+  apps/customers/migrations/0002_initial.py
+    + Add field user to customerprofile
+Migrations for 'vehicles':
+  apps/vehicles/migrations/0001_initial.py
+    + Create model Vehicle
+Migrations for 'estimates':
+  apps/estimates/migrations/0001_initial.py
+    + Create model EstimateItem
+    + Create model EstimateService
+    + Create model Estimate
+  apps/estimates/migrations/0002_initial.py
+    + Add field work_order to estimate
+    + Add field estimate to estimateitem
+    + Add field estimate to estimateservice
+    + Add field service to estimateservice
+Migrations for 'receipts':
+  apps/receipts/migrations/0001_initial.py
+    + Create model ReceiptItem
+    + Create model ReceiptPayment
+    + Create model ReceiptService
+    + Create model Receipt
+  apps/receipts/migrations/0002_initial.py
+    + Add field work_order to receipt
+    + Add field receipt to receiptitem
+    + Add field receipt to receiptpayment
+    + Add field receipt to receiptservice
+    + Add field service to receiptservice
+Migrations for 'users':
+  apps/users/migrations/0001_initial.py
+    + Create model User
+Migrations for 'work_orders':
+  apps/work_orders/migrations/0001_initial.py
+    + Create model WorkOrder
+    + Create model WorkOrderItem
+    + Create model WorkOrderService
