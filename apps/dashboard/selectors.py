@@ -39,11 +39,32 @@ class DashboardSelectors:
 
         # This is a bit simplified for top services
         from apps.work_orders.models import WorkOrderService
-        top_services = WorkOrderService.objects.filter(date_filter).values('name_snapshot').annotate(count=Count('id')).order_by('-count')[:5]
-
-        customers_with_debt = Receipt.objects.filter(pending_amount__gt=0).values('customer__first_name', 'customer__last_name', 'pending_amount').order_by('-pending_amount')[:10]
-
-        recent_payments = ReceiptPayment.objects.order_by('-payment_date')[:10]
+        customers_with_debt = [
+            {
+                "customer_id": row["customer_id"],
+                "customer_first_name": row["customer__first_name"],
+                "customer_last_name": row["customer__last_name"],
+                "pending_amount": row["pending_amount"],
+            }
+            for row in Receipt.objects.filter(pending_amount__gt=0).values(
+                "customer_id", "customer__first_name", "customer__last_name", "pending_amount"
+            ).order_by("-pending_amount")[:10]
+        ]
+        recent_payments = [
+            {
+                "id": payment.id,
+                "amount": payment.amount,
+                "payment_date": payment.payment_date,
+                "receipt_code": payment.receipt.code if payment.receipt_id else None,
+                "customer_first_name": payment.receipt.customer.first_name if payment.receipt_id else "",
+                "customer_last_name": payment.receipt.customer.last_name if payment.receipt_id else "",
+            }
+            for payment in ReceiptPayment.objects.select_related("receipt__customer").order_by("-payment_date")[:10]
+        ]
+        top_services = [
+            {"name": row["name_snapshot"], "count": row["count"]}
+            for row in WorkOrderService.objects.filter(date_filter).values("name_snapshot").annotate(count=Count("id")).order_by("-count")[:5]
+        ]
 
         receipts_by_status = Receipt.objects.filter(date_filter).values('status').annotate(count=Count('id'))
 
@@ -54,8 +75,8 @@ class DashboardSelectors:
             "received_income_total": received_income_total,
             "work_orders_count": work_orders_count,
             "work_orders_by_status": list(work_orders_by_status),
-            "top_services": list(top_services),
-            "customers_with_debt": list(customers_with_debt),
-            "recent_payments": list(recent_payments.values('id', 'amount', 'payment_date', 'receipt__code')),
+            "top_services": top_services,
+            "customers_with_debt": customers_with_debt,
+            "recent_payments": recent_payments,
             "receipts_by_status": list(receipts_by_status)
         }
