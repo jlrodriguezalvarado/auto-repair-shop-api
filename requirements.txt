@@ -1,0 +1,10 @@
+Django>=5.1,<6.1
+djangorestframework>=3.15,<4
+djangorestframework-simplejwt>=5.3,<6
+drf-spectacular>=0.27,<1
+django-filter>=24.3,<26
+django-cors-headers>=4.6,<5
+reportlab>=4.2,<5
+gunicorn>=23.0,<24
+psycopg2-binary>=2.9,<3
+whitenoise>=6.8,<7
