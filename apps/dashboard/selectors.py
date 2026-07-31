@@ -39,6 +39,7 @@ class DashboardSelectors:
         work_orders_count = WorkOrder.objects.filter(date_filter).count()
         work_orders_by_status = WorkOrder.objects.filter(date_filter).values("status").annotate(count=Count("id"))
         from apps.work_orders.models import WorkOrderService
+<<<<<<< HEAD
         top_services = (
             WorkOrderService.objects.filter(
                 work_order__company_id=company_id,
@@ -55,6 +56,37 @@ class DashboardSelectors:
         )
         recent_payments = ReceiptPayment.objects.filter(receipt__company_id=company_id).order_by("-payment_date")[:10]
         receipts_by_status = Receipt.objects.filter(date_filter).values("status").annotate(count=Count("id"))
+=======
+        customers_with_debt = [
+            {
+                "customer_id": row["customer_id"],
+                "customer_first_name": row["customer__first_name"],
+                "customer_last_name": row["customer__last_name"],
+                "pending_amount": row["pending_amount"],
+            }
+            for row in Receipt.objects.filter(pending_amount__gt=0).values(
+                "customer_id", "customer__first_name", "customer__last_name", "pending_amount"
+            ).order_by("-pending_amount")[:10]
+        ]
+        recent_payments = [
+            {
+                "id": payment.id,
+                "amount": payment.amount,
+                "payment_date": payment.payment_date,
+                "receipt_code": payment.receipt.code if payment.receipt_id else None,
+                "customer_first_name": payment.receipt.customer.first_name if payment.receipt_id else "",
+                "customer_last_name": payment.receipt.customer.last_name if payment.receipt_id else "",
+            }
+            for payment in ReceiptPayment.objects.select_related("receipt__customer").order_by("-payment_date")[:10]
+        ]
+        top_services = [
+            {"name": row["name_snapshot"], "count": row["count"]}
+            for row in WorkOrderService.objects.filter(date_filter).values("name_snapshot").annotate(count=Count("id")).order_by("-count")[:5]
+        ]
+
+        receipts_by_status = Receipt.objects.filter(date_filter).values('status').annotate(count=Count('id'))
+
+>>>>>>> 57e364fbf09a38203cf48b12a33136d53157d211
         return {
             "vehicles_served_count": vehicles_served_count,
             "pending_receipts_count": pending_receipts_count,
@@ -62,8 +94,15 @@ class DashboardSelectors:
             "received_income_total": received_income_total,
             "work_orders_count": work_orders_count,
             "work_orders_by_status": list(work_orders_by_status),
+<<<<<<< HEAD
             "top_services": list(top_services),
             "customers_with_debt": list(customers_with_debt),
             "recent_payments": list(recent_payments.values("id", "amount", "payment_date", "receipt__code")),
             "receipts_by_status": list(receipts_by_status),
+=======
+            "top_services": top_services,
+            "customers_with_debt": customers_with_debt,
+            "recent_payments": recent_payments,
+            "receipts_by_status": list(receipts_by_status)
+>>>>>>> 57e364fbf09a38203cf48b12a33136d53157d211
         }

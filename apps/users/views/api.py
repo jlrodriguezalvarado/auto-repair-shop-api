@@ -1,5 +1,9 @@
 from rest_framework import viewsets, permissions
+<<<<<<< HEAD
 from rest_framework.decorators import action
+=======
+from rest_framework.views import APIView
+>>>>>>> 57e364fbf09a38203cf48b12a33136d53157d211
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from apps.common.soft_delete import SoftDeleteViewSetMixin, soft_delete_schema_view
@@ -9,9 +13,19 @@ from apps.users.permissions import IsTenantUser, IsAdministrator
 
 User = get_user_model()
 
+<<<<<<< HEAD
 @soft_delete_schema_view()
 class UserViewSet(SoftDeleteViewSetMixin, TenantQuerysetMixin, viewsets.ModelViewSet):
     queryset = User.all_objects.select_related("company").all()
+=======
+class CurrentUserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request):
+        return Response(UserSerializer(request.user).data)
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+>>>>>>> 57e364fbf09a38203cf48b12a33136d53157d211
 
     def get_serializer_class(self):
         if self.action == "create":

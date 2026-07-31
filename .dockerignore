@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .env
 .env.*
 __pycache__/
@@ -18,3 +19,29 @@ test_*.py
 test_*.txt
 db.sqlite3
 *.sql
+=======
+.git
+.gitignore
+__pycache__
+*.pyc
+*.pyo
+*.sqlite3
+.env
+.env.*
+!.env.example
+*.md
+apps_content.txt
+*_log.txt
+test_output.txt
+final_test_attempt.txt
+final_tests_log.txt
+migrate_log.txt
+migrations_log.txt
+spectacular_log.txt
+.pytest_cache
+.mypy_cache
+.ruff_cache
+htmlcov
+.coverage
+docker/daemon.json.example
+>>>>>>> 57e364fbf09a38203cf48b12a33136d53157d211
