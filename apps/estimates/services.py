@@ -18,6 +18,7 @@ def create_work_order_from_estimate(estimate):
         raise ValueError("Only approved estimates can be converted to work orders")
 
     work_order = WorkOrder.objects.create(
+        company=estimate.company,
         customer=estimate.customer,
         vehicle=estimate.vehicle,
         status=WorkOrder.Status.APPROVED

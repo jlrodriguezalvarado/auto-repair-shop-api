@@ -1,8 +1,20 @@
 from django.db import models
-from django.conf import settings
 from apps.common.models import BaseModel
+from django.conf import settings
+
 class CustomerProfile(BaseModel):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="customer_profile")
+    company = models.ForeignKey(
+        "company.Company",
+        on_delete=models.CASCADE,
+        related_name="customers",
+    )
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="customer_profile",
+    )
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     document_id = models.CharField(max_length=50, blank=True, null=True)

@@ -6,13 +6,13 @@ class WorkOrderServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkOrderService
         fields = "__all__"
-        read_only_fields = ("total_price", "name_snapshot", "description_snapshot")
+        read_only_fields = ("total_price", "name_snapshot", "description_snapshot", "deleted_at")
 
 class WorkOrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkOrderItem
         fields = "__all__"
-        read_only_fields = ("total_cost",)
+        read_only_fields = ("total_cost", "deleted_at")
 
 class WorkOrderSerializer(serializers.ModelSerializer):
     totals = serializers.SerializerMethodField()
@@ -22,7 +22,7 @@ class WorkOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkOrder
         fields = "__all__"
-        read_only_fields = ("code", "created_at", "updated_at")
+        read_only_fields = ("code", "company", "created_at", "updated_at", "deleted_at")
 
     def get_totals(self, obj):
         return get_work_order_totals(obj)
@@ -31,4 +31,4 @@ class WorkOrderCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkOrder
         fields = "__all__"
-        read_only_fields = ("code", "created_at", "updated_at")
+        read_only_fields = ("code", "company", "created_at", "updated_at", "deleted_at")

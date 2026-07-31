@@ -5,3 +5,4 @@ class ServiceCatalogSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceCatalog
         fields = "__all__"
+        read_only_fields = ("company", "deleted_at")

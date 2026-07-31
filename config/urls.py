@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from apps.common.health import liveness, readiness
 from django.conf import settings
 from django.conf.urls.static import static
 from drf_spectacular.views import (
@@ -10,9 +11,12 @@ from drf_spectacular.views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("health/live/", liveness, name="health-live"),
+    path("health/ready/", readiness, name="health-ready"),
     # API
     path("api/users/", include("apps.users.urls", namespace="users")),
     path("api/company/", include("apps.company.urls", namespace="company")),
+    path("api/companies/", include("apps.company.urls_companies", namespace="companies")),
     path("api/customers/", include("apps.customers.urls", namespace="customers")),
     path("api/vehicles/", include("apps.vehicles.urls", namespace="vehicles")),
     path("api/catalog/", include("apps.catalog.urls", namespace="catalog")),
@@ -20,6 +24,7 @@ urlpatterns = [
     path("api/estimates/", include("apps.estimates.urls", namespace="estimates")),
     path("api/receipts/", include("apps.receipts.urls", namespace="receipts")),
     path("api/dashboard/", include("apps.dashboard.urls", namespace="dashboard")),
+    path("api/notifications/", include("apps.notifications.urls")),
 
     # Documentation
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),

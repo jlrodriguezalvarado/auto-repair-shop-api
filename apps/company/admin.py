@@ -3,4 +3,5 @@ from .models import Company
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("name", "tax_id", "email", "phone")
+    search_fields = ("name", "tax_id", "email")

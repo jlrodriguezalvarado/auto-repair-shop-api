@@ -5,19 +5,19 @@ class ReceiptServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReceiptService
         fields = "__all__"
-        read_only_fields = ("total_price", "name_snapshot", "description_snapshot")
+        read_only_fields = ("total_price", "name_snapshot", "description_snapshot", "deleted_at")
 
 class ReceiptItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReceiptItem
         fields = "__all__"
-        read_only_fields = ("total_cost",)
+        read_only_fields = ("total_cost", "deleted_at")
 
 class ReceiptPaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReceiptPayment
         fields = "__all__"
-        read_only_fields = ("payment_date",)
+        read_only_fields = ("payment_date", "deleted_at")
 
 class ReceiptSerializer(serializers.ModelSerializer):
     services = ReceiptServiceSerializer(many=True, read_only=True)
@@ -27,4 +27,4 @@ class ReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Receipt
         fields = "__all__"
-        read_only_fields = ("code", "created_at", "updated_at", "subtotal", "tax_amount", "total", "paid_amount", "pending_amount", "issued_at")
+        read_only_fields = ("code", "company", "created_at", "updated_at", "deleted_at", "subtotal", "tax_amount", "total", "paid_amount", "pending_amount", "issued_at")

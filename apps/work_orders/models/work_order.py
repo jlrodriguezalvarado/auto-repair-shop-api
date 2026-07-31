@@ -15,7 +15,12 @@ class WorkOrder(BaseModel):
         COMPLETED = "completed", "Completed"
         DELIVERED = "delivered", "Delivered"
         CANCELLED = "cancelled", "Cancelled"
-    code = models.CharField(max_length=20, unique=True, editable=False)
+    company = models.ForeignKey(
+        "company.Company",
+        on_delete=models.CASCADE,
+        related_name="work_orders",
+    )
+    code = models.CharField(max_length=20, editable=False)
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE, related_name="work_orders")
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name="work_orders")
     assigned_mechanic = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="assigned_work_orders")
@@ -26,6 +31,17 @@ class WorkOrder(BaseModel):
     started_at = models.DateTimeField(blank=True, null=True)
     completed_at = models.DateTimeField(blank=True, null=True)
     delivered_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["code"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="uniq_work_order_code_alive",
+            ),
+        ]
+
     def save(self, *args, **kwargs):
         if not self.code:
             self.code = f"WO-{uuid.uuid4().hex[:8].upper()}"

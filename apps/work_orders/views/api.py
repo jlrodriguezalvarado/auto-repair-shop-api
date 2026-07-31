@@ -3,6 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from apps.common.soft_delete import SoftDeleteViewSetMixin, soft_delete_schema_view
+from apps.common.tenancy import TenantQuerysetMixin, require_tenant_access, resolve_company_id, require_tenant_user
 from apps.work_orders.models import WorkOrder, WorkOrderService, WorkOrderItem
 from apps.work_orders.serializers.api import (
     WorkOrderSerializer,
@@ -10,11 +12,11 @@ from apps.work_orders.serializers.api import (
     WorkOrderServiceSerializer,
     WorkOrderItemSerializer
 )
-from apps.work_orders.services import add_service_to_work_order
-from apps.users.permissions import IsAdministrator, IsSecretary, IsMechanic, IsCustomer
+from apps.users.permissions import IsAdministrator, IsSecretary, IsMechanic, IsCustomer, IsTenantUser
 
-class WorkOrderViewSet(viewsets.ModelViewSet):
-    queryset = WorkOrder.objects.all().prefetch_related("services", "items")
+@soft_delete_schema_view()
+class WorkOrderViewSet(SoftDeleteViewSetMixin, TenantQuerysetMixin, viewsets.ModelViewSet):
+    queryset = WorkOrder.all_objects.all().prefetch_related("services", "items")
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ["customer", "vehicle", "assigned_mechanic", "status"]
     search_fields = ["code", "vehicle__plate", "customer__first_name", "customer__last_name"]
@@ -28,24 +30,33 @@ class WorkOrderViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if not self.request.user.is_authenticated:
             return [permissions.IsAuthenticated()]
+        base = [IsTenantUser()]
+        if self.action == "hard_delete":
+            return base + [IsAdministrator()]
         if self.request.user.role == "MECHANIC":
-            return [IsMechanic()]
+            return base + [IsMechanic()]
         if self.request.user.role == "CUSTOMER":
-            return [IsCustomer()]
-        return [(IsAdministrator | IsSecretary)()]
+            return base + [IsCustomer()]
+        return base + [(IsAdministrator | IsSecretary)()]
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        require_tenant_access(self.request, write=False)
+        queryset = WorkOrder.all_objects.filter(
+            company_id=resolve_company_id(self.request)
+        ).prefetch_related("services", "items")
         user = self.request.user
-        if not user.is_authenticated:
-            return queryset.none()
         if user.role == "MECHANIC":
-            return queryset.filter(assigned_mechanic=user)
-        if user.role == "CUSTOMER":
-            if hasattr(user, 'customer_profile'):
-                return queryset.filter(customer=user.customer_profile)
-            return queryset.none()
-        return queryset
+            queryset = queryset.filter(assigned_mechanic=user)
+        elif user.role == "CUSTOMER":
+            if hasattr(user, "customer_profile"):
+                queryset = queryset.filter(customer=user.customer_profile)
+            else:
+                queryset = queryset.none()
+        if self.action == "restore":
+            return queryset.filter(deleted_at__isnull=False)
+        if self.action == "hard_delete":
+            return queryset
+        return self.apply_deleted_filter(queryset)
 
     @action(detail=True, methods=["post"])
     def assign_mechanic(self, request, pk=None):
@@ -55,6 +66,8 @@ class WorkOrderViewSet(viewsets.ModelViewSet):
             return Response({"detail": "mechanic_id is required"}, status=status.HTTP_400_BAD_REQUEST)
         work_order.assigned_mechanic_id = mechanic_id
         work_order.save()
+        from apps.notifications.services.domain_events import notify_work_order_assigned
+        notify_work_order_assigned(work_order, actor=request.user)
         return Response(WorkOrderSerializer(work_order).data)
 
     @action(detail=True, methods=["post"])
@@ -65,24 +78,69 @@ class WorkOrderViewSet(viewsets.ModelViewSet):
             return Response({"detail": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST)
         work_order.status = new_status
         work_order.save()
+        from apps.notifications.services.domain_events import notify_work_order_status_changed
+        notify_work_order_status_changed(work_order, actor=request.user)
         return Response(WorkOrderSerializer(work_order).data)
 
-
-class WorkOrderServiceViewSet(viewsets.ModelViewSet):
-    queryset = WorkOrderService.objects.all()
+@soft_delete_schema_view()
+class WorkOrderServiceViewSet(SoftDeleteViewSetMixin, viewsets.ModelViewSet):
+    queryset = WorkOrderService.all_objects.all()
     serializer_class = WorkOrderServiceSerializer
-    permission_classes = [IsAdministrator | IsSecretary]
+
+    def get_permissions(self):
+        if self.action == "hard_delete":
+            return [IsTenantUser(), IsAdministrator()]
+        return [IsTenantUser(), (IsAdministrator | IsSecretary)()]
+
+    def get_queryset(self):
+        require_tenant_access(self.request, write=False)
+        qs = WorkOrderService.all_objects.filter(
+            work_order__company_id=resolve_company_id(self.request)
+        )
+        if self.action == "restore":
+            return qs.filter(deleted_at__isnull=False)
+        if self.action == "hard_delete":
+            return qs
+        return self.apply_deleted_filter(qs)
 
     def perform_create(self, serializer):
-        service = serializer.validated_data['service']
+        require_tenant_user(self.request.user)
+        service = serializer.validated_data["service"]
         serializer.save(
             name_snapshot=service.name,
             description_snapshot=service.description,
-            unit_price=serializer.validated_data.get('unit_price', service.base_price)
+            unit_price=serializer.validated_data.get("unit_price", service.base_price)
         )
 
+    def perform_destroy(self, instance):
+        require_tenant_user(self.request.user)
+        instance.delete()
 
-class WorkOrderItemViewSet(viewsets.ModelViewSet):
-    queryset = WorkOrderItem.objects.all()
+@soft_delete_schema_view()
+class WorkOrderItemViewSet(SoftDeleteViewSetMixin, viewsets.ModelViewSet):
+    queryset = WorkOrderItem.all_objects.all()
     serializer_class = WorkOrderItemSerializer
-    permission_classes = [IsAdministrator | IsSecretary]
+
+    def get_permissions(self):
+        if self.action == "hard_delete":
+            return [IsTenantUser(), IsAdministrator()]
+        return [IsTenantUser(), (IsAdministrator | IsSecretary)()]
+
+    def get_queryset(self):
+        require_tenant_access(self.request, write=False)
+        qs = WorkOrderItem.all_objects.filter(
+            work_order__company_id=resolve_company_id(self.request)
+        )
+        if self.action == "restore":
+            return qs.filter(deleted_at__isnull=False)
+        if self.action == "hard_delete":
+            return qs
+        return self.apply_deleted_filter(qs)
+
+    def perform_create(self, serializer):
+        require_tenant_user(self.request.user)
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        require_tenant_user(self.request.user)
+        instance.delete()

@@ -1,30 +1,45 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.http import HttpResponse
-from apps.receipts.models import Receipt, ReceiptService, ReceiptItem, ReceiptPayment
-from apps.receipts.serializers.api import ReceiptSerializer, ReceiptServiceSerializer, ReceiptItemSerializer, ReceiptPaymentSerializer
+from apps.common.soft_delete import SoftDeleteViewSetMixin, soft_delete_schema_view
+from apps.common.tenancy import TenantQuerysetMixin, require_tenant_access, resolve_company_id, require_tenant_user
+from apps.receipts.models import Receipt, ReceiptService, ReceiptItem
+from apps.receipts.serializers.api import ReceiptSerializer, ReceiptServiceSerializer, ReceiptItemSerializer
 from apps.receipts.services import calculate_receipt_totals, add_payment_to_receipt
 from apps.common.services.pdf_service import PDFService
-from apps.users.permissions import IsAdministrator, IsSecretary, IsCustomer
+from apps.users.permissions import IsAdministrator, IsSecretary, IsCustomer, IsTenantUser
+from config.s3_presign import presigned_url_for_file_field
 
-class ReceiptViewSet(viewsets.ModelViewSet):
-    queryset = Receipt.objects.all().prefetch_related("services", "items", "payments")
+@soft_delete_schema_view()
+class ReceiptViewSet(SoftDeleteViewSetMixin, TenantQuerysetMixin, viewsets.ModelViewSet):
+    queryset = Receipt.all_objects.all().prefetch_related("services", "items", "payments")
     serializer_class = ReceiptSerializer
 
     def get_permissions(self):
-        if self.request.user.role == "CUSTOMER":
-            return [IsCustomer()]
-        return [(IsAdministrator | IsSecretary)()]
+        base = [IsTenantUser()]
+        if self.action == "hard_delete":
+            return base + [IsAdministrator()]
+        if self.request.user.is_authenticated and self.request.user.role == "CUSTOMER":
+            return base + [IsCustomer()]
+        return base + [(IsAdministrator | IsSecretary)()]
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        require_tenant_access(self.request, write=False)
+        queryset = Receipt.all_objects.filter(
+            company_id=resolve_company_id(self.request)
+        ).prefetch_related("services", "items", "payments")
         user = self.request.user
         if user.role == "CUSTOMER":
-            if hasattr(user, 'customer_profile'):
-                return queryset.filter(customer=user.customer_profile)
-            return queryset.none()
-        return queryset
+            if hasattr(user, "customer_profile"):
+                queryset = queryset.filter(customer=user.customer_profile)
+            else:
+                queryset = queryset.none()
+        if self.action == "restore":
+            return queryset.filter(deleted_at__isnull=False)
+        if self.action == "hard_delete":
+            return queryset
+        return self.apply_deleted_filter(queryset)
 
     @action(detail=True, methods=["post"])
     def add_payment(self, request, pk=None):
@@ -33,7 +48,6 @@ class ReceiptViewSet(viewsets.ModelViewSet):
         payment_method = request.data.get("payment_method")
         reference = request.data.get("reference")
         notes = request.data.get("notes")
-
         try:
             add_payment_to_receipt(receipt, amount, payment_method, reference, notes)
             return Response(ReceiptSerializer(receipt).data)
@@ -53,28 +67,87 @@ class ReceiptViewSet(viewsets.ModelViewSet):
     def persist_pdf(self, request, pk=None):
         receipt = self.get_object()
         PDFService.generate_receipt_pdf(receipt, persist=True)
-        return Response({"detail": "PDF persisted", "url": receipt.pdf_file.url if receipt.pdf_file else None})
+        receipt.refresh_from_db()
+        return Response({
+            "detail": "PDF persisted",
+            "url": presigned_url_for_file_field(receipt.pdf_file) or None,
+        })
 
-
-class ReceiptServiceViewSet(viewsets.ModelViewSet):
-    queryset = ReceiptService.objects.all()
+@soft_delete_schema_view()
+class ReceiptServiceViewSet(SoftDeleteViewSetMixin, viewsets.ModelViewSet):
+    queryset = ReceiptService.all_objects.all()
     serializer_class = ReceiptServiceSerializer
-    permission_classes = [IsAdministrator | IsSecretary]
+
+    def get_permissions(self):
+        if self.action == "hard_delete":
+            return [IsTenantUser(), IsAdministrator()]
+        return [IsTenantUser(), (IsAdministrator | IsSecretary)()]
+
+    def get_queryset(self):
+        require_tenant_access(self.request, write=False)
+        qs = ReceiptService.all_objects.filter(
+            receipt__company_id=resolve_company_id(self.request)
+        )
+        if self.action == "restore":
+            return qs.filter(deleted_at__isnull=False)
+        if self.action == "hard_delete":
+            return qs
+        return self.apply_deleted_filter(qs)
 
     def perform_create(self, serializer):
-        service = serializer.validated_data['service']
+        require_tenant_user(self.request.user)
+        service = serializer.validated_data["service"]
         instance = serializer.save(
             name_snapshot=service.name,
             description_snapshot=service.description,
-            unit_price=serializer.validated_data.get('unit_price', service.base_price)
+            unit_price=serializer.validated_data.get("unit_price", service.base_price)
         )
         calculate_receipt_totals(instance.receipt)
 
-class ReceiptItemViewSet(viewsets.ModelViewSet):
-    queryset = ReceiptItem.objects.all()
-    serializer_class = ReceiptItemSerializer
-    permission_classes = [IsAdministrator | IsSecretary]
-
-    def perform_create(self, serializer):
+    def perform_update(self, serializer):
+        require_tenant_user(self.request.user)
         instance = serializer.save()
         calculate_receipt_totals(instance.receipt)
+
+    def perform_destroy(self, instance):
+        require_tenant_user(self.request.user)
+        receipt = instance.receipt
+        instance.delete()
+        calculate_receipt_totals(receipt)
+
+@soft_delete_schema_view()
+class ReceiptItemViewSet(SoftDeleteViewSetMixin, viewsets.ModelViewSet):
+    queryset = ReceiptItem.all_objects.all()
+    serializer_class = ReceiptItemSerializer
+
+    def get_permissions(self):
+        if self.action == "hard_delete":
+            return [IsTenantUser(), IsAdministrator()]
+        return [IsTenantUser(), (IsAdministrator | IsSecretary)()]
+
+    def get_queryset(self):
+        require_tenant_access(self.request, write=False)
+        qs = ReceiptItem.all_objects.filter(
+            receipt__company_id=resolve_company_id(self.request)
+        )
+        if self.action == "restore":
+            return qs.filter(deleted_at__isnull=False)
+        if self.action == "hard_delete":
+            return qs
+        return self.apply_deleted_filter(qs)
+
+    def perform_create(self, serializer):
+        require_tenant_user(self.request.user)
+        instance = serializer.save()
+        calculate_receipt_totals(instance.receipt)
+
+    def perform_update(self, serializer):
+        require_tenant_user(self.request.user)
+        instance = serializer.save()
+        calculate_receipt_totals(instance.receipt)
+
+    def perform_destroy(self, instance):
+        require_tenant_user(self.request.user)
+        receipt = instance.receipt
+        instance.delete()
+        calculate_receipt_totals(receipt)

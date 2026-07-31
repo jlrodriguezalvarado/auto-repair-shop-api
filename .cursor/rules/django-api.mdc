@@ -1,0 +1,14 @@
+---
+description: Django API patterns and Angular-consumer contract rules
+globs: "**/*"
+alwaysApply: false
+---
+
+# Django API layer
+
+- Full policy: `.agents/policies/django-api.md` and `.agents/policies/integration.md`.
+- Consumer: Angular app in sibling `../auto-repair-shop-front`. Prefer explicit, stable HTTP contracts and validated OpenAPI.
+- Scope user-owned querysets before lookup. Keep the standard error envelope and legacy keys required for compatibility.
+- Additive migrations only unless destruction is explicitly approved. Test against PostgreSQL behavior.
+- Do not commit/push/deploy/migrate production without authorization.
+- Prefer delegating substantive API work to the `django-api` subagent with a filled `.agents/HANDOFF.md` block.

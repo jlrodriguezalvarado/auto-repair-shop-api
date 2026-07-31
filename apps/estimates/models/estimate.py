@@ -15,7 +15,12 @@ class Estimate(BaseModel):
         EXPIRED = "expired", "Expired"
         CANCELLED = "cancelled", "Cancelled"
 
-    code = models.CharField(max_length=20, unique=True, editable=False)
+    company = models.ForeignKey(
+        "company.Company",
+        on_delete=models.CASCADE,
+        related_name="estimates",
+    )
+    code = models.CharField(max_length=20, editable=False)
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE, related_name="estimates")
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name="estimates")
     work_order = models.OneToOneField(WorkOrder, on_delete=models.SET_NULL, null=True, blank=True, related_name="estimate")
@@ -38,6 +43,14 @@ class Estimate(BaseModel):
     class Meta:
         verbose_name = "Estimate"
         verbose_name_plural = "Estimates"
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["code"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="uniq_estimate_code_alive",
+            ),
+        ]
 
 
 class EstimateService(BaseModel):

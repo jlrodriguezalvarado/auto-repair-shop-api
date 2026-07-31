@@ -1,0 +1,104 @@
+# Production stack for Mechanics under secure-docker-infrastructure (Traefik).
+# Copy to /opt/apps/mechanics/ on the server together with .env and .env.deploy.
+# Local development uses auto-repair-shop-api/docker-compose.yml + docker-tools — not this file.
+name: mechanics
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  api:
+    image: ${REGISTRY_HOST}/mechanics/api:${APP_VERSION}
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-config.settings.production}
+      REQUIREMENTS_FILE: production.txt
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-0}
+      RUN_COLLECTSTATIC: ${RUN_COLLECTSTATIC:-1}
+      POSTGRES_DB: ${POSTGRES_DB:-mechanics_api}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT_INTERNAL: ${DB_PORT_INTERNAL:-5432}
+      DB_WAIT_SECONDS: ${DB_WAIT_SECONDS:-60}
+    expose:
+      - "8000"
+    volumes:
+      - media_data:/app/media
+      - ./secrets:/run/secrets:ro
+    networks:
+      - internal
+      - proxy
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "python -c \"import urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8000/health/ready/', headers={'X-Forwarded-Proto': 'https'}), timeout=3)\"",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    logging: *default-logging
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.mechanics-api.rule=Host(`${MECHANICS_API_HOST}`)
+      - traefik.http.routers.mechanics-api.entrypoints=websecure
+      - traefik.http.routers.mechanics-api.tls.certresolver=letsencrypt
+      - traefik.http.routers.mechanics-api.middlewares=public-chain@file
+      - traefik.http.services.mechanics-api.loadbalancer.server.port=8000
+
+  web:
+    image: ${REGISTRY_HOST}/mechanics/web:${WEB_VERSION}
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - proxy
+    logging: *default-logging
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.mechanics-web.rule=Host(`${MECHANICS_HOST}`)
+      - traefik.http.routers.mechanics-web.entrypoints=websecure
+      - traefik.http.routers.mechanics-web.tls.certresolver=letsencrypt
+      - traefik.http.routers.mechanics-web.middlewares=public-chain@file
+      - traefik.http.services.mechanics-web.loadbalancer.server.port=80
+
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-mechanics_api}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  internal:
+    internal: true
+  proxy:
+    external: true
+    name: ${PROXY_NETWORK:-proxy}
+
+volumes:
+  postgres_data:
+  media_data:

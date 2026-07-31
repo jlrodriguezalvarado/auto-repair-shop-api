@@ -1,9 +1,15 @@
 from django.db import models
 from apps.common.models import BaseModel
 from apps.customers.models import CustomerProfile
+
 class Vehicle(BaseModel):
+    company = models.ForeignKey(
+        "company.Company",
+        on_delete=models.CASCADE,
+        related_name="vehicles",
+    )
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE, related_name="vehicles")
-    plate = models.CharField(max_length=20, unique=True)
+    plate = models.CharField(max_length=20)
     brand = models.CharField(max_length=100, blank=True, null=True)
     model = models.CharField(max_length=100, blank=True, null=True)
     year = models.IntegerField(blank=True, null=True)
@@ -12,3 +18,13 @@ class Vehicle(BaseModel):
     vin = models.CharField(max_length=50, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["company", "plate"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="uniq_vehicle_company_plate",
+            ),
+        ]

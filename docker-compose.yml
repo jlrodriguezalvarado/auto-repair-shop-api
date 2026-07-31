@@ -1,0 +1,59 @@
+name: mechanics_api
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-app-environment: &app-environment
+  DEBUG: "1"
+  DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-config.settings.local}
+  POSTGRES_DB: ${POSTGRES_DB:-mechanics_api}
+  DB_USER: ${DB_USER:-postgres}
+  DB_PASSWORD: ${DB_PASSWORD:-postgres}
+  DB_HOST: ${DB_HOST:-tools_postgres}
+  DB_PORT_INTERNAL: ${DB_PORT_INTERNAL:-5432}
+  DATABASE_URL: ${DATABASE_URL:-}
+  DB_WAIT_SECONDS: ${DB_WAIT_SECONDS:-60}
+
+services:
+  mechanics_api_app:
+    image: ${RUNTIME_IMAGE:-django-runtime:3.12}
+    container_name: mechanics_api_app
+    restart: "on-failure:3"
+    init: true
+    stop_signal: SIGTERM
+    stop_grace_period: 25s
+    environment:
+      <<: *app-environment
+      VIRTUAL_ENV: ${VIRTUAL_ENV:-/app/venv}
+      REQUIREMENTS_FILE: ${REQUIREMENTS_FILE:-local.txt}
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-0}
+      RUN_COLLECTSTATIC: ${RUN_COLLECTSTATIC:-1}
+    ports:
+      - "${APP_PORT:-8001}:8000"
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./:/app
+    cpus: 0.5
+    mem_limit: 512m
+    networks: [app-network, dev-tools]
+    logging: *default-logging
+    working_dir: /app
+    entrypoint: ["/bin/sh", "/app/docker/entrypoint-app.sh"]
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready/', timeout=3)\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+networks:
+  app-network:
+    driver: bridge
+  dev-tools:
+    external: true
+    name: dev-tools

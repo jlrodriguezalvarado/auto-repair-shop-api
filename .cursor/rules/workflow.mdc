@@ -1,0 +1,15 @@
+---
+description: Mandatory feature lifecycle for auto-repair-shop-api
+alwaysApply: true
+---
+
+# auto-repair-shop-api workflow
+
+- Before planning or implementing, read `.agents/WORKFLOW.md` and the approved file under `.plans/`.
+- Sibling consumer: `../auto-repair-shop-front` (Angular). Prefer changes that reduce API↔frontend friction.
+- Do not implement while a plan awaits approval. After approval, record `.plans/YYYY-MM-DD-<slug>.md` from `.plans/TEMPLATE.md`.
+- Cross features: store the plan here (contract owner) with Scope cross; implement API first, then adapt the front.
+- Delegate API work to `django-api` using `.agents/HANDOFF.md`. After integration, run `qa`.
+- Do not push, merge, deploy, or run production migrations unless the user explicitly authorizes it.
+- Preserve dirty worktree changes. Never hide failures by deleting tests or weakening assertions.
+- After a repeatable agent failure, follow `.agents/policies/continuous-improvement.md` (or a parent harness directive) and record it in the plan.

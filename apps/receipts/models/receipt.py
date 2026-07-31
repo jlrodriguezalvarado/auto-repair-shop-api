@@ -15,12 +15,16 @@ class Receipt(BaseModel):
         OVERDUE = "overdue", "Overdue"
         CANCELLED = "cancelled", "Cancelled"
 
-    code = models.CharField(max_length=20, unique=True, editable=False)
+    company = models.ForeignKey(
+        "company.Company",
+        on_delete=models.CASCADE,
+        related_name="receipts",
+    )
+    code = models.CharField(max_length=20, editable=False)
     customer = models.ForeignKey(CustomerProfile, on_delete=models.CASCADE, related_name="receipts")
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name="receipts")
     work_order = models.ForeignKey(WorkOrder, on_delete=models.SET_NULL, null=True, blank=True, related_name="receipts")
     estimate = models.ForeignKey(Estimate, on_delete=models.SET_NULL, null=True, blank=True, related_name="receipts")
-
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.UNPAID)
     notes = models.TextField(blank=True, null=True)
 
@@ -42,6 +46,14 @@ class Receipt(BaseModel):
     class Meta:
         verbose_name = "Receipt"
         verbose_name_plural = "Receipts"
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["code"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="uniq_receipt_code_alive",
+            ),
+        ]
 
 
 class ReceiptService(BaseModel):

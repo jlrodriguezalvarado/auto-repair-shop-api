@@ -1,0 +1,6673 @@
+openapi: 3.0.3
+info:
+  title: App Taller Mecánico API
+  version: 1.0.0
+  description: API para la gestión de un taller mecánico.
+paths:
+  /api/catalog/services/:
+    get:
+      operationId: catalog_services_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - catalog
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedServiceCatalogList'
+          description: ''
+    post:
+      operationId: catalog_services_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - catalog
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCatalog'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServiceCatalog'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServiceCatalog'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCatalog'
+          description: ''
+  /api/catalog/services/{id}/:
+    get:
+      operationId: catalog_services_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este service catalog.
+        required: true
+      tags:
+      - catalog
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCatalog'
+          description: ''
+    put:
+      operationId: catalog_services_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este service catalog.
+        required: true
+      tags:
+      - catalog
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCatalog'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServiceCatalog'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServiceCatalog'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCatalog'
+          description: ''
+    patch:
+      operationId: catalog_services_partial_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este service catalog.
+        required: true
+      tags:
+      - catalog
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedServiceCatalog'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedServiceCatalog'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedServiceCatalog'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCatalog'
+          description: ''
+    delete:
+      operationId: catalog_services_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este service catalog.
+        required: true
+      tags:
+      - catalog
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/catalog/services/{id}/hard-delete/:
+    post:
+      operationId: catalog_services_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este service catalog.
+        required: true
+      tags:
+      - catalog
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/catalog/services/{id}/restore/:
+    post:
+      operationId: catalog_services_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este service catalog.
+        required: true
+      tags:
+      - catalog
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCatalog'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ServiceCatalog'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ServiceCatalog'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCatalog'
+          description: ''
+  /api/companies/:
+    get:
+      operationId: companies_list
+      description: SUPER_ADMIN CRUD for all companies. POST creates company + initial
+        ADMIN.
+      parameters:
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - companies
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCompanyList'
+          description: ''
+    post:
+      operationId: companies_create
+      description: SUPER_ADMIN CRUD for all companies. POST creates company + initial
+        ADMIN.
+      tags:
+      - companies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CompanyCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CompanyCreate'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyCreate'
+          description: ''
+  /api/companies/{id}/:
+    get:
+      operationId: companies_retrieve
+      description: SUPER_ADMIN CRUD for all companies. POST creates company + initial
+        ADMIN.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este company.
+        required: true
+      tags:
+      - companies
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+    put:
+      operationId: companies_update
+      description: SUPER_ADMIN CRUD for all companies. POST creates company + initial
+        ADMIN.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este company.
+        required: true
+      tags:
+      - companies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Company'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Company'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+    patch:
+      operationId: companies_partial_update
+      description: SUPER_ADMIN CRUD for all companies. POST creates company + initial
+        ADMIN.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este company.
+        required: true
+      tags:
+      - companies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCompany'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCompany'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCompany'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+    delete:
+      operationId: companies_destroy
+      description: SUPER_ADMIN CRUD for all companies. POST creates company + initial
+        ADMIN.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este company.
+        required: true
+      tags:
+      - companies
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/companies/{id}/hard-delete/:
+    post:
+      operationId: companies_hard_delete_create
+      description: SUPER_ADMIN CRUD for all companies. POST creates company + initial
+        ADMIN.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este company.
+        required: true
+      tags:
+      - companies
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/companies/{id}/restore/:
+    post:
+      operationId: companies_restore_create
+      description: SUPER_ADMIN CRUD for all companies. POST creates company + initial
+        ADMIN.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este company.
+        required: true
+      tags:
+      - companies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Company'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Company'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+  /api/company/:
+    get:
+      operationId: company_retrieve
+      description: Tenant company endpoint. SUPER_ADMIN may GET with X-Company-Id;
+        writes require tenant ADMIN.
+      parameters:
+      - in: header
+        name: X-Company-Id
+        schema:
+          type: integer
+        description: SUPER_ADMIN read-only company context.
+      tags:
+      - company
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+    put:
+      operationId: company_update
+      description: Tenant company endpoint. SUPER_ADMIN may GET with X-Company-Id;
+        writes require tenant ADMIN.
+      tags:
+      - company
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Company'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Company'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+    patch:
+      operationId: company_partial_update
+      description: Tenant company endpoint. SUPER_ADMIN may GET with X-Company-Id;
+        writes require tenant ADMIN.
+      tags:
+      - company
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCompany'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCompany'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCompany'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+  /api/customers/profiles/:
+    get:
+      operationId: customers_profiles_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - customers
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCustomerProfileList'
+          description: ''
+    post:
+      operationId: customers_profiles_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - customers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomerProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomerProfile'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerProfile'
+          description: ''
+  /api/customers/profiles/{id}/:
+    get:
+      operationId: customers_profiles_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este customer profile.
+        required: true
+      tags:
+      - customers
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerProfile'
+          description: ''
+    put:
+      operationId: customers_profiles_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este customer profile.
+        required: true
+      tags:
+      - customers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomerProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomerProfile'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerProfile'
+          description: ''
+    patch:
+      operationId: customers_profiles_partial_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este customer profile.
+        required: true
+      tags:
+      - customers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomerProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomerProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomerProfile'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerProfile'
+          description: ''
+    delete:
+      operationId: customers_profiles_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este customer profile.
+        required: true
+      tags:
+      - customers
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/customers/profiles/{id}/hard-delete/:
+    post:
+      operationId: customers_profiles_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este customer profile.
+        required: true
+      tags:
+      - customers
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/customers/profiles/{id}/restore/:
+    post:
+      operationId: customers_profiles_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este customer profile.
+        required: true
+      tags:
+      - customers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomerProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomerProfile'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerProfile'
+          description: ''
+  /api/dashboard/summary/:
+    get:
+      operationId: dashboard_summary_retrieve
+      parameters:
+      - in: header
+        name: X-Company-Id
+        schema:
+          type: integer
+        description: SUPER_ADMIN read-only company context.
+      tags:
+      - dashboard
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/estimates/estimate-items/:
+    get:
+      operationId: estimates_estimate_items_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - estimates
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEstimateItemList'
+          description: ''
+    post:
+      operationId: estimates_estimate_items_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstimateItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EstimateItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EstimateItem'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimateItem'
+          description: ''
+  /api/estimates/estimate-items/{id}/:
+    get:
+      operationId: estimates_estimate_items_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este estimate item.
+        required: true
+      tags:
+      - estimates
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimateItem'
+          description: ''
+    put:
+      operationId: estimates_estimate_items_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este estimate item.
+        required: true
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstimateItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EstimateItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EstimateItem'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimateItem'
+          description: ''
+    patch:
+      operationId: estimates_estimate_items_partial_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este estimate item.
+        required: true
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEstimateItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEstimateItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEstimateItem'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimateItem'
+          description: ''
+    delete:
+      operationId: estimates_estimate_items_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este estimate item.
+        required: true
+      tags:
+      - estimates
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/estimates/estimate-items/{id}/hard-delete/:
+    post:
+      operationId: estimates_estimate_items_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este estimate item.
+        required: true
+      tags:
+      - estimates
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/estimates/estimate-items/{id}/restore/:
+    post:
+      operationId: estimates_estimate_items_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este estimate item.
+        required: true
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstimateItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EstimateItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EstimateItem'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimateItem'
+          description: ''
+  /api/estimates/estimate-services/:
+    get:
+      operationId: estimates_estimate_services_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - estimates
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEstimateServiceList'
+          description: ''
+    post:
+      operationId: estimates_estimate_services_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstimateService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EstimateService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EstimateService'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimateService'
+          description: ''
+  /api/estimates/estimate-services/{id}/:
+    get:
+      operationId: estimates_estimate_services_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este estimate service.
+        required: true
+      tags:
+      - estimates
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimateService'
+          description: ''
+    put:
+      operationId: estimates_estimate_services_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este estimate service.
+        required: true
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstimateService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EstimateService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EstimateService'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimateService'
+          description: ''
+    patch:
+      operationId: estimates_estimate_services_partial_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este estimate service.
+        required: true
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEstimateService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEstimateService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEstimateService'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimateService'
+          description: ''
+    delete:
+      operationId: estimates_estimate_services_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este estimate service.
+        required: true
+      tags:
+      - estimates
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/estimates/estimate-services/{id}/hard-delete/:
+    post:
+      operationId: estimates_estimate_services_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este estimate service.
+        required: true
+      tags:
+      - estimates
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/estimates/estimate-services/{id}/restore/:
+    post:
+      operationId: estimates_estimate_services_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este estimate service.
+        required: true
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstimateService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EstimateService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EstimateService'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimateService'
+          description: ''
+  /api/estimates/estimates/:
+    get:
+      operationId: estimates_estimates_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - estimates
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEstimateList'
+          description: ''
+    post:
+      operationId: estimates_estimates_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estimate'
+          description: ''
+  /api/estimates/estimates/{id}/:
+    get:
+      operationId: estimates_estimates_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Estimate.
+        required: true
+      tags:
+      - estimates
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estimate'
+          description: ''
+    put:
+      operationId: estimates_estimates_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Estimate.
+        required: true
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estimate'
+          description: ''
+    patch:
+      operationId: estimates_estimates_partial_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Estimate.
+        required: true
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEstimate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEstimate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEstimate'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estimate'
+          description: ''
+    delete:
+      operationId: estimates_estimates_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Estimate.
+        required: true
+      tags:
+      - estimates
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/estimates/estimates/{id}/approve/:
+    post:
+      operationId: estimates_estimates_approve_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Estimate.
+        required: true
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estimate'
+          description: ''
+  /api/estimates/estimates/{id}/create_work_order/:
+    post:
+      operationId: estimates_estimates_create_work_order_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Estimate.
+        required: true
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estimate'
+          description: ''
+  /api/estimates/estimates/{id}/hard-delete/:
+    post:
+      operationId: estimates_estimates_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Estimate.
+        required: true
+      tags:
+      - estimates
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/estimates/estimates/{id}/pdf/:
+    get:
+      operationId: estimates_estimates_pdf_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Estimate.
+        required: true
+      tags:
+      - estimates
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estimate'
+          description: ''
+  /api/estimates/estimates/{id}/persist_pdf/:
+    post:
+      operationId: estimates_estimates_persist_pdf_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Estimate.
+        required: true
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estimate'
+          description: ''
+  /api/estimates/estimates/{id}/restore/:
+    post:
+      operationId: estimates_estimates_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Estimate.
+        required: true
+      tags:
+      - estimates
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Estimate'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Estimate'
+          description: ''
+  /api/notifications/:
+    get:
+      operationId: notifications_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - notifications
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNotificationList'
+          description: ''
+  /api/notifications/{id}/:
+    get:
+      operationId: notifications_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este notification.
+        required: true
+      tags:
+      - notifications
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/{id}/mark-read/:
+    post:
+      operationId: notifications_mark_read_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este notification.
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/mark-all-read/:
+    post:
+      operationId: notifications_mark_all_read_create
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/push-subscriptions/:
+    get:
+      operationId: notifications_push_subscriptions_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - notifications
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPushSubscriptionList'
+          description: ''
+    post:
+      operationId: notifications_push_subscriptions_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushSubscriptionWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PushSubscriptionWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PushSubscriptionWrite'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushSubscriptionWrite'
+          description: ''
+  /api/notifications/push-subscriptions/{id}/:
+    get:
+      operationId: notifications_push_subscriptions_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este push subscription.
+        required: true
+      tags:
+      - notifications
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushSubscription'
+          description: ''
+    delete:
+      operationId: notifications_push_subscriptions_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este push subscription.
+        required: true
+      tags:
+      - notifications
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/notifications/push-subscriptions/{id}/hard-delete/:
+    post:
+      operationId: notifications_push_subscriptions_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este push subscription.
+        required: true
+      tags:
+      - notifications
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/notifications/push-subscriptions/{id}/restore/:
+    post:
+      operationId: notifications_push_subscriptions_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este push subscription.
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushSubscription'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PushSubscription'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PushSubscription'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushSubscription'
+          description: ''
+  /api/notifications/push-subscriptions/unsubscribe/:
+    post:
+      operationId: notifications_push_subscriptions_unsubscribe_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushSubscription'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PushSubscription'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PushSubscription'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushSubscription'
+          description: ''
+  /api/notifications/push-subscriptions/vapid-public-key/:
+    get:
+      operationId: notifications_push_subscriptions_vapid_public_key_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - notifications
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushSubscription'
+          description: ''
+  /api/notifications/unread-count/:
+    get:
+      operationId: notifications_unread_count_retrieve
+      tags:
+      - notifications
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/receipts/receipt-items/:
+    get:
+      operationId: receipts_receipt_items_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - receipts
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReceiptItemList'
+          description: ''
+    post:
+      operationId: receipts_receipt_items_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReceiptItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReceiptItem'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptItem'
+          description: ''
+  /api/receipts/receipt-items/{id}/:
+    get:
+      operationId: receipts_receipt_items_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este receipt item.
+        required: true
+      tags:
+      - receipts
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptItem'
+          description: ''
+    put:
+      operationId: receipts_receipt_items_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este receipt item.
+        required: true
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReceiptItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReceiptItem'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptItem'
+          description: ''
+    patch:
+      operationId: receipts_receipt_items_partial_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este receipt item.
+        required: true
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedReceiptItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedReceiptItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedReceiptItem'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptItem'
+          description: ''
+    delete:
+      operationId: receipts_receipt_items_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este receipt item.
+        required: true
+      tags:
+      - receipts
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/receipts/receipt-items/{id}/hard-delete/:
+    post:
+      operationId: receipts_receipt_items_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este receipt item.
+        required: true
+      tags:
+      - receipts
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/receipts/receipt-items/{id}/restore/:
+    post:
+      operationId: receipts_receipt_items_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este receipt item.
+        required: true
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReceiptItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReceiptItem'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptItem'
+          description: ''
+  /api/receipts/receipt-services/:
+    get:
+      operationId: receipts_receipt_services_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - receipts
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReceiptServiceList'
+          description: ''
+    post:
+      operationId: receipts_receipt_services_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReceiptService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReceiptService'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptService'
+          description: ''
+  /api/receipts/receipt-services/{id}/:
+    get:
+      operationId: receipts_receipt_services_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este receipt service.
+        required: true
+      tags:
+      - receipts
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptService'
+          description: ''
+    put:
+      operationId: receipts_receipt_services_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este receipt service.
+        required: true
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReceiptService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReceiptService'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptService'
+          description: ''
+    patch:
+      operationId: receipts_receipt_services_partial_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este receipt service.
+        required: true
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedReceiptService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedReceiptService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedReceiptService'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptService'
+          description: ''
+    delete:
+      operationId: receipts_receipt_services_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este receipt service.
+        required: true
+      tags:
+      - receipts
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/receipts/receipt-services/{id}/hard-delete/:
+    post:
+      operationId: receipts_receipt_services_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este receipt service.
+        required: true
+      tags:
+      - receipts
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/receipts/receipt-services/{id}/restore/:
+    post:
+      operationId: receipts_receipt_services_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este receipt service.
+        required: true
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReceiptService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReceiptService'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptService'
+          description: ''
+  /api/receipts/receipts/:
+    get:
+      operationId: receipts_receipts_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - receipts
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReceiptList'
+          description: ''
+    post:
+      operationId: receipts_receipts_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+          description: ''
+  /api/receipts/receipts/{id}/:
+    get:
+      operationId: receipts_receipts_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Receipt.
+        required: true
+      tags:
+      - receipts
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+          description: ''
+    put:
+      operationId: receipts_receipts_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Receipt.
+        required: true
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+          description: ''
+    patch:
+      operationId: receipts_receipts_partial_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Receipt.
+        required: true
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedReceipt'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedReceipt'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedReceipt'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+          description: ''
+    delete:
+      operationId: receipts_receipts_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Receipt.
+        required: true
+      tags:
+      - receipts
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/receipts/receipts/{id}/add_payment/:
+    post:
+      operationId: receipts_receipts_add_payment_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Receipt.
+        required: true
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+          description: ''
+  /api/receipts/receipts/{id}/hard-delete/:
+    post:
+      operationId: receipts_receipts_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Receipt.
+        required: true
+      tags:
+      - receipts
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/receipts/receipts/{id}/pdf/:
+    get:
+      operationId: receipts_receipts_pdf_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Receipt.
+        required: true
+      tags:
+      - receipts
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+          description: ''
+  /api/receipts/receipts/{id}/persist_pdf/:
+    post:
+      operationId: receipts_receipts_persist_pdf_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Receipt.
+        required: true
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+          description: ''
+  /api/receipts/receipts/{id}/restore/:
+    post:
+      operationId: receipts_receipts_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Receipt.
+        required: true
+      tags:
+      - receipts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+          description: ''
+  /api/users/change-password/:
+    post:
+      operationId: users_change_password_create
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangePassword'
+          description: ''
+  /api/users/token/:
+    post:
+      operationId: users_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTokenObtainPair'
+          description: ''
+  /api/users/token/refresh/:
+    post:
+      operationId: users_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomTokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomTokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTokenRefresh'
+          description: ''
+  /api/users/users/:
+    get:
+      operationId: users_users_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - users
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserList'
+          description: ''
+    post:
+      operationId: users_users_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreate'
+          description: ''
+  /api/users/users/{id}/:
+    get:
+      operationId: users_users_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este User.
+        required: true
+      tags:
+      - users
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: users_users_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este User.
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: users_users_partial_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este User.
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    delete:
+      operationId: users_users_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este User.
+        required: true
+      tags:
+      - users
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/users/users/{id}/hard-delete/:
+    post:
+      operationId: users_users_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este User.
+        required: true
+      tags:
+      - users
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/users/users/{id}/restore/:
+    post:
+      operationId: users_users_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este User.
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/users/users/me/:
+    get:
+      operationId: users_users_me_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - users
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/vehicles/vehicles/:
+    get:
+      operationId: vehicles_vehicles_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: customer
+        schema:
+          type: integer
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - in: query
+        name: plate
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - vehicles
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedVehicleList'
+          description: ''
+    post:
+      operationId: vehicles_vehicles_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - vehicles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+          description: ''
+  /api/vehicles/vehicles/{id}/:
+    get:
+      operationId: vehicles_vehicles_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este vehicle.
+        required: true
+      tags:
+      - vehicles
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+          description: ''
+    put:
+      operationId: vehicles_vehicles_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este vehicle.
+        required: true
+      tags:
+      - vehicles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+          description: ''
+    patch:
+      operationId: vehicles_vehicles_partial_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este vehicle.
+        required: true
+      tags:
+      - vehicles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedVehicle'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedVehicle'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedVehicle'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+          description: ''
+    delete:
+      operationId: vehicles_vehicles_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este vehicle.
+        required: true
+      tags:
+      - vehicles
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/vehicles/vehicles/{id}/hard-delete/:
+    post:
+      operationId: vehicles_vehicles_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este vehicle.
+        required: true
+      tags:
+      - vehicles
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/vehicles/vehicles/{id}/restore/:
+    post:
+      operationId: vehicles_vehicles_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este vehicle.
+        required: true
+      tags:
+      - vehicles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+          description: ''
+  /api/work-orders/order-items/:
+    get:
+      operationId: work_orders_order_items_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - work-orders
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWorkOrderItemList'
+          description: ''
+    post:
+      operationId: work_orders_order_items_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkOrderItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkOrderItem'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderItem'
+          description: ''
+  /api/work-orders/order-items/{id}/:
+    get:
+      operationId: work_orders_order_items_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order item.
+        required: true
+      tags:
+      - work-orders
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderItem'
+          description: ''
+    put:
+      operationId: work_orders_order_items_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order item.
+        required: true
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkOrderItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkOrderItem'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderItem'
+          description: ''
+    patch:
+      operationId: work_orders_order_items_partial_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order item.
+        required: true
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkOrderItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkOrderItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkOrderItem'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderItem'
+          description: ''
+    delete:
+      operationId: work_orders_order_items_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order item.
+        required: true
+      tags:
+      - work-orders
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/work-orders/order-items/{id}/hard-delete/:
+    post:
+      operationId: work_orders_order_items_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order item.
+        required: true
+      tags:
+      - work-orders
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/work-orders/order-items/{id}/restore/:
+    post:
+      operationId: work_orders_order_items_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order item.
+        required: true
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkOrderItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkOrderItem'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderItem'
+          description: ''
+  /api/work-orders/order-services/:
+    get:
+      operationId: work_orders_order_services_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      tags:
+      - work-orders
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWorkOrderServiceList'
+          description: ''
+    post:
+      operationId: work_orders_order_services_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkOrderService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkOrderService'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderService'
+          description: ''
+  /api/work-orders/order-services/{id}/:
+    get:
+      operationId: work_orders_order_services_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order service.
+        required: true
+      tags:
+      - work-orders
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderService'
+          description: ''
+    put:
+      operationId: work_orders_order_services_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order service.
+        required: true
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkOrderService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkOrderService'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderService'
+          description: ''
+    patch:
+      operationId: work_orders_order_services_partial_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order service.
+        required: true
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkOrderService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkOrderService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkOrderService'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderService'
+          description: ''
+    delete:
+      operationId: work_orders_order_services_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order service.
+        required: true
+      tags:
+      - work-orders
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/work-orders/order-services/{id}/hard-delete/:
+    post:
+      operationId: work_orders_order_services_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order service.
+        required: true
+      tags:
+      - work-orders
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/work-orders/order-services/{id}/restore/:
+    post:
+      operationId: work_orders_order_services_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order service.
+        required: true
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderService'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkOrderService'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkOrderService'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderService'
+          description: ''
+  /api/work-orders/orders/:
+    get:
+      operationId: work_orders_orders_list
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: query
+        name: assigned_mechanic
+        schema:
+          type: integer
+      - in: query
+        name: customer
+        schema:
+          type: integer
+      - in: query
+        name: deleted
+        schema:
+          type: string
+          enum:
+          - all
+          - 'false'
+          - 'true'
+        description: Filter soft-deleted rows. Default false (active only).
+      - name: ordering
+        required: false
+        in: query
+        description: Qué campo usar para ordenar los resultados.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un término de búsqueda.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - approved
+          - cancelled
+          - completed
+          - delivered
+          - estimated
+          - in_progress
+          - received
+          - under_review
+        description: |-
+          * `received` - Received
+          * `under_review` - Under Review
+          * `estimated` - Estimated
+          * `approved` - Approved
+          * `in_progress` - In Progress
+          * `completed` - Completed
+          * `delivered` - Delivered
+          * `cancelled` - Cancelled
+      - in: query
+        name: vehicle
+        schema:
+          type: integer
+      tags:
+      - work-orders
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWorkOrderList'
+          description: ''
+    post:
+      operationId: work_orders_orders_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkOrderCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkOrderCreateUpdate'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderCreateUpdate'
+          description: ''
+  /api/work-orders/orders/{id}/:
+    get:
+      operationId: work_orders_orders_retrieve
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order.
+        required: true
+      tags:
+      - work-orders
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+          description: ''
+    put:
+      operationId: work_orders_orders_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order.
+        required: true
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkOrderCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkOrderCreateUpdate'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderCreateUpdate'
+          description: ''
+    patch:
+      operationId: work_orders_orders_partial_update
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order.
+        required: true
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkOrderCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkOrderCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedWorkOrderCreateUpdate'
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderCreateUpdate'
+          description: ''
+    delete:
+      operationId: work_orders_orders_destroy
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order.
+        required: true
+      tags:
+      - work-orders
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/work-orders/orders/{id}/assign_mechanic/:
+    post:
+      operationId: work_orders_orders_assign_mechanic_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order.
+        required: true
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrder'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkOrder'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkOrder'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+          description: ''
+  /api/work-orders/orders/{id}/change_status/:
+    post:
+      operationId: work_orders_orders_change_status_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order.
+        required: true
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrder'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkOrder'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkOrder'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+          description: ''
+  /api/work-orders/orders/{id}/hard-delete/:
+    post:
+      operationId: work_orders_orders_hard_delete_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order.
+        required: true
+      tags:
+      - work-orders
+      security:
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/work-orders/orders/{id}/restore/:
+    post:
+      operationId: work_orders_orders_restore_create
+      description: Soft-delete destroy, POST restore, POST hard-delete, and list filter
+        ?deleted=false|true|all.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este work order.
+        required: true
+      tags:
+      - work-orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrder'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WorkOrder'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WorkOrder'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+          description: ''
+components:
+  parameters:
+    CompanyContextHeader:
+      name: X-Company-Id
+      in: header
+      required: false
+      schema:
+        type: integer
+      description: SUPER_ADMIN read-only company context. Required for SUPER_ADMIN
+        on tenant business GET endpoints.
+  schemas:
+    ChangePassword:
+      type: object
+      properties:
+        current_password:
+          type: string
+          writeOnly: true
+        new_password:
+          type: string
+          writeOnly: true
+        confirm_password:
+          type: string
+          writeOnly: true
+      required:
+      - confirm_password
+      - current_password
+      - new_password
+    Company:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        tax_id:
+          type: string
+          maxLength: 50
+        address:
+          type: string
+        phone:
+          type: string
+          maxLength: 50
+        secondary_phone:
+          type: string
+          nullable: true
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        logo:
+          type: string
+          format: uri
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - address
+      - created_at
+      - deleted_at
+      - email
+      - id
+      - name
+      - phone
+      - tax_id
+      - updated_at
+    CompanyAdminUser:
+      type: object
+      properties:
+        username:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+          minLength: 6
+        first_name:
+          type: string
+          default: ''
+        last_name:
+          type: string
+          default: ''
+      required:
+      - email
+      - password
+      - username
+    CompanyBrief:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+      required:
+      - id
+      - name
+    CompanyCreate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        tax_id:
+          type: string
+          maxLength: 50
+        address:
+          type: string
+        phone:
+          type: string
+          maxLength: 50
+        secondary_phone:
+          type: string
+          nullable: true
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        logo:
+          type: string
+          format: uri
+          nullable: true
+        admin_user:
+          allOf:
+          - $ref: '#/components/schemas/CompanyAdminUser'
+          writeOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - address
+      - admin_user
+      - created_at
+      - deleted_at
+      - email
+      - id
+      - name
+      - phone
+      - tax_id
+      - updated_at
+    CustomTokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - password
+      - username
+    CustomTokenRefresh:
+      type: object
+      properties:
+        refresh:
+          type: string
+        access:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - refresh
+    CustomerProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        first_name:
+          type: string
+          maxLength: 255
+        last_name:
+          type: string
+          maxLength: 255
+        document_id:
+          type: string
+          nullable: true
+          maxLength: 50
+        phone:
+          type: string
+          maxLength: 50
+        secondary_phone:
+          type: string
+          nullable: true
+          maxLength: 50
+        email:
+          nullable: true
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        address:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
+        company:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          nullable: true
+      required:
+      - company
+      - created_at
+      - deleted_at
+      - first_name
+      - id
+      - last_name
+      - phone
+      - updated_at
+    Estimate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/EstimateService'
+          readOnly: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/EstimateItem'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        code:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/EstimateStatusEnum'
+        notes:
+          type: string
+          nullable: true
+        valid_until:
+          type: string
+          format: date
+          nullable: true
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        discount_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        tax_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        pdf_file:
+          type: string
+          format: uri
+          nullable: true
+        company:
+          type: integer
+          readOnly: true
+        customer:
+          type: integer
+        vehicle:
+          type: integer
+        work_order:
+          type: integer
+          nullable: true
+      required:
+      - code
+      - company
+      - created_at
+      - customer
+      - deleted_at
+      - id
+      - items
+      - services
+      - subtotal
+      - tax_amount
+      - total
+      - updated_at
+      - vehicle
+    EstimateItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        unit_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        total_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        provided_by:
+          type: string
+          maxLength: 20
+        supplier_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        notes:
+          type: string
+          nullable: true
+        estimate:
+          type: integer
+      required:
+      - created_at
+      - deleted_at
+      - estimate
+      - id
+      - name
+      - total_cost
+      - unit_cost
+      - updated_at
+    EstimateService:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name_snapshot:
+          type: string
+          readOnly: true
+        description_snapshot:
+          type: string
+          readOnly: true
+          nullable: true
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        estimate:
+          type: integer
+        service:
+          type: integer
+          nullable: true
+      required:
+      - created_at
+      - deleted_at
+      - description_snapshot
+      - estimate
+      - id
+      - name_snapshot
+      - total_price
+      - unit_price
+      - updated_at
+    EstimateStatusEnum:
+      enum:
+      - draft
+      - sent
+      - approved
+      - rejected
+      - expired
+      - cancelled
+      type: string
+      description: |-
+        * `draft` - Draft
+        * `sent` - Sent
+        * `approved` - Approved
+        * `rejected` - Rejected
+        * `expired` - Expired
+        * `cancelled` - Cancelled
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        notification_type:
+          allOf:
+          - $ref: '#/components/schemas/NotificationTypeEnum'
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        body:
+          type: string
+          readOnly: true
+        data:
+          readOnly: true
+        is_read:
+          type: boolean
+          readOnly: true
+        read_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - body
+      - created_at
+      - data
+      - deleted_at
+      - id
+      - is_read
+      - notification_type
+      - read_at
+      - title
+      - updated_at
+    NotificationTypeEnum:
+      enum:
+      - work_order.status_changed
+      - work_order.assigned
+      - estimate.approved
+      - estimate.ready
+      - receipt.issued
+      - admin.test_push
+      type: string
+      description: |-
+        * `work_order.status_changed` - Work order status changed
+        * `work_order.assigned` - Work order assigned
+        * `estimate.approved` - Estimate approved
+        * `estimate.ready` - Estimate ready
+        * `receipt.issued` - Receipt issued
+        * `admin.test_push` - Admin test push
+    PaginatedCompanyList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Company'
+    PaginatedCustomerProfileList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerProfile'
+    PaginatedEstimateItemList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EstimateItem'
+    PaginatedEstimateList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Estimate'
+    PaginatedEstimateServiceList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EstimateService'
+    PaginatedNotificationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+    PaginatedPushSubscriptionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PushSubscription'
+    PaginatedReceiptItemList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptItem'
+    PaginatedReceiptList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Receipt'
+    PaginatedReceiptServiceList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptService'
+    PaginatedServiceCatalogList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceCatalog'
+    PaginatedUserList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    PaginatedVehicleList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vehicle'
+    PaginatedWorkOrderItemList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkOrderItem'
+    PaginatedWorkOrderList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkOrder'
+    PaginatedWorkOrderServiceList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkOrderService'
+    PatchedCompany:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        tax_id:
+          type: string
+          maxLength: 50
+        address:
+          type: string
+        phone:
+          type: string
+          maxLength: 50
+        secondary_phone:
+          type: string
+          nullable: true
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        logo:
+          type: string
+          format: uri
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+    PatchedCustomerProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        first_name:
+          type: string
+          maxLength: 255
+        last_name:
+          type: string
+          maxLength: 255
+        document_id:
+          type: string
+          nullable: true
+          maxLength: 50
+        phone:
+          type: string
+          maxLength: 50
+        secondary_phone:
+          type: string
+          nullable: true
+          maxLength: 50
+        email:
+          nullable: true
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        address:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
+        company:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          nullable: true
+    PatchedEstimate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/EstimateService'
+          readOnly: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/EstimateItem'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        code:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/EstimateStatusEnum'
+        notes:
+          type: string
+          nullable: true
+        valid_until:
+          type: string
+          format: date
+          nullable: true
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        discount_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        tax_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        pdf_file:
+          type: string
+          format: uri
+          nullable: true
+        company:
+          type: integer
+          readOnly: true
+        customer:
+          type: integer
+        vehicle:
+          type: integer
+        work_order:
+          type: integer
+          nullable: true
+    PatchedEstimateItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        unit_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        total_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        provided_by:
+          type: string
+          maxLength: 20
+        supplier_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        notes:
+          type: string
+          nullable: true
+        estimate:
+          type: integer
+    PatchedEstimateService:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name_snapshot:
+          type: string
+          readOnly: true
+        description_snapshot:
+          type: string
+          readOnly: true
+          nullable: true
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        estimate:
+          type: integer
+        service:
+          type: integer
+          nullable: true
+    PatchedReceipt:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptService'
+          readOnly: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptItem'
+          readOnly: true
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptPayment'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        code:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/ReceiptStatusEnum'
+        notes:
+          type: string
+          nullable: true
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        discount_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        tax_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        paid_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        pending_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        pdf_file:
+          type: string
+          format: uri
+          nullable: true
+        issued_at:
+          type: string
+          format: date-time
+          readOnly: true
+        company:
+          type: integer
+          readOnly: true
+        customer:
+          type: integer
+        vehicle:
+          type: integer
+        work_order:
+          type: integer
+          nullable: true
+        estimate:
+          type: integer
+          nullable: true
+    PatchedReceiptItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        unit_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        total_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        provided_by:
+          type: string
+          maxLength: 20
+        supplier_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        notes:
+          type: string
+          nullable: true
+        receipt:
+          type: integer
+    PatchedReceiptService:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name_snapshot:
+          type: string
+          readOnly: true
+        description_snapshot:
+          type: string
+          readOnly: true
+          nullable: true
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        receipt:
+          type: integer
+        service:
+          type: integer
+          nullable: true
+    PatchedServiceCatalog:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        base_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        estimated_duration_minutes:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        is_active:
+          type: boolean
+        company:
+          type: integer
+          readOnly: true
+    PatchedUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          title: Dirección de correo electrónico
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        first_name:
+          type: string
+          title: Nombre
+          maxLength: 150
+        last_name:
+          type: string
+          title: Apellidos
+          maxLength: 150
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        company:
+          allOf:
+          - $ref: '#/components/schemas/CompanyBrief'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+    PatchedVehicle:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        plate:
+          type: string
+          maxLength: 20
+        brand:
+          type: string
+          nullable: true
+          maxLength: 100
+        model:
+          type: string
+          nullable: true
+          maxLength: 100
+        year:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        color:
+          type: string
+          nullable: true
+          maxLength: 50
+        photo:
+          type: string
+          format: uri
+          nullable: true
+        vin:
+          type: string
+          nullable: true
+          maxLength: 50
+        notes:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
+        company:
+          type: integer
+          readOnly: true
+        customer:
+          type: integer
+    PatchedWorkOrderCreateUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        code:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status281Enum'
+        private_note:
+          type: string
+          nullable: true
+        customer_complaint:
+          type: string
+          nullable: true
+        diagnosis_note:
+          type: string
+          nullable: true
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        delivered_at:
+          type: string
+          format: date-time
+          nullable: true
+        company:
+          type: integer
+          readOnly: true
+        customer:
+          type: integer
+        vehicle:
+          type: integer
+        assigned_mechanic:
+          type: integer
+          nullable: true
+    PatchedWorkOrderItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        unit_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        total_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        provided_by:
+          $ref: '#/components/schemas/ProvidedByEnum'
+        supplier_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        purchase_date:
+          type: string
+          format: date
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        work_order:
+          type: integer
+    PatchedWorkOrderService:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name_snapshot:
+          type: string
+          readOnly: true
+        description_snapshot:
+          type: string
+          readOnly: true
+          nullable: true
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        notes:
+          type: string
+          nullable: true
+        work_order:
+          type: integer
+        service:
+          type: integer
+          nullable: true
+    PaymentMethodEnum:
+      enum:
+      - cash
+      - card
+      - transfer
+      - mobile_payment
+      - zelle
+      - other
+      type: string
+      description: |-
+        * `cash` - Cash
+        * `card` - Card
+        * `transfer` - Transfer
+        * `mobile_payment` - Mobile Payment
+        * `zelle` - Zelle
+        * `other` - Other
+    ProvidedByEnum:
+      enum:
+      - customer
+      - workshop
+      type: string
+      description: |-
+        * `customer` - Customer
+        * `workshop` - Workshop
+    PushSubscription:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        endpoint:
+          type: string
+          readOnly: true
+        user_agent:
+          type: string
+          readOnly: true
+        platform:
+          type: string
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+        last_used_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - created_at
+      - deleted_at
+      - endpoint
+      - id
+      - is_active
+      - last_used_at
+      - platform
+      - user_agent
+    PushSubscriptionWrite:
+      type: object
+      properties:
+        endpoint:
+          type: string
+        keys:
+          type: object
+          additionalProperties:
+            type: string
+        user_agent:
+          type: string
+        platform:
+          type: string
+          maxLength: 32
+      required:
+      - endpoint
+      - keys
+    Receipt:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptService'
+          readOnly: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptItem'
+          readOnly: true
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptPayment'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        code:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/ReceiptStatusEnum'
+        notes:
+          type: string
+          nullable: true
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        discount_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        tax_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        paid_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        pending_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        pdf_file:
+          type: string
+          format: uri
+          nullable: true
+        issued_at:
+          type: string
+          format: date-time
+          readOnly: true
+        company:
+          type: integer
+          readOnly: true
+        customer:
+          type: integer
+        vehicle:
+          type: integer
+        work_order:
+          type: integer
+          nullable: true
+        estimate:
+          type: integer
+          nullable: true
+      required:
+      - code
+      - company
+      - created_at
+      - customer
+      - deleted_at
+      - id
+      - issued_at
+      - items
+      - paid_amount
+      - payments
+      - pending_amount
+      - services
+      - subtotal
+      - tax_amount
+      - total
+      - updated_at
+      - vehicle
+    ReceiptItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        unit_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        total_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        provided_by:
+          type: string
+          maxLength: 20
+        supplier_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        notes:
+          type: string
+          nullable: true
+        receipt:
+          type: integer
+      required:
+      - created_at
+      - deleted_at
+      - id
+      - name
+      - receipt
+      - total_cost
+      - unit_cost
+      - updated_at
+    ReceiptPayment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        payment_method:
+          $ref: '#/components/schemas/PaymentMethodEnum'
+        reference:
+          type: string
+          nullable: true
+          maxLength: 100
+        payment_date:
+          type: string
+          format: date-time
+          readOnly: true
+        notes:
+          type: string
+          nullable: true
+        receipt:
+          type: integer
+      required:
+      - amount
+      - created_at
+      - deleted_at
+      - id
+      - payment_date
+      - payment_method
+      - receipt
+      - updated_at
+    ReceiptService:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name_snapshot:
+          type: string
+          readOnly: true
+        description_snapshot:
+          type: string
+          readOnly: true
+          nullable: true
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        receipt:
+          type: integer
+        service:
+          type: integer
+          nullable: true
+      required:
+      - created_at
+      - deleted_at
+      - description_snapshot
+      - id
+      - name_snapshot
+      - receipt
+      - total_price
+      - unit_price
+      - updated_at
+    ReceiptStatusEnum:
+      enum:
+      - unpaid
+      - partial
+      - paid
+      - overdue
+      - cancelled
+      type: string
+      description: |-
+        * `unpaid` - Unpaid
+        * `partial` - Partial
+        * `paid` - Paid
+        * `overdue` - Overdue
+        * `cancelled` - Cancelled
+    RoleEnum:
+      enum:
+      - SUPER_ADMIN
+      - ADMIN
+      - SECRETARY
+      - MECHANIC
+      - CUSTOMER
+      type: string
+      description: |-
+        * `SUPER_ADMIN` - Super Admin
+        * `ADMIN` - Administrator
+        * `SECRETARY` - Secretary
+        * `MECHANIC` - Mechanic
+        * `CUSTOMER` - Customer
+    ServiceCatalog:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        base_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        estimated_duration_minutes:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        is_active:
+          type: boolean
+        company:
+          type: integer
+          readOnly: true
+      required:
+      - base_price
+      - company
+      - created_at
+      - deleted_at
+      - id
+      - name
+      - updated_at
+    Status281Enum:
+      enum:
+      - received
+      - under_review
+      - estimated
+      - approved
+      - in_progress
+      - completed
+      - delivered
+      - cancelled
+      type: string
+      description: |-
+        * `received` - Received
+        * `under_review` - Under Review
+        * `estimated` - Estimated
+        * `approved` - Approved
+        * `in_progress` - In Progress
+        * `completed` - Completed
+        * `delivered` - Delivered
+        * `cancelled` - Cancelled
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          title: Dirección de correo electrónico
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        first_name:
+          type: string
+          title: Nombre
+          maxLength: 150
+        last_name:
+          type: string
+          title: Apellidos
+          maxLength: 150
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        company:
+          allOf:
+          - $ref: '#/components/schemas/CompanyBrief'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - company
+      - created_at
+      - deleted_at
+      - id
+      - updated_at
+      - username
+    UserCreate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+        email:
+          title: Dirección de correo electrónico
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        first_name:
+          type: string
+          title: Nombre
+          maxLength: 150
+        last_name:
+          type: string
+          title: Apellidos
+          maxLength: 150
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+      required:
+      - id
+      - password
+      - username
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        plate:
+          type: string
+          maxLength: 20
+        brand:
+          type: string
+          nullable: true
+          maxLength: 100
+        model:
+          type: string
+          nullable: true
+          maxLength: 100
+        year:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        color:
+          type: string
+          nullable: true
+          maxLength: 50
+        photo:
+          type: string
+          format: uri
+          nullable: true
+        vin:
+          type: string
+          nullable: true
+          maxLength: 50
+        notes:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
+        company:
+          type: integer
+          readOnly: true
+        customer:
+          type: integer
+      required:
+      - company
+      - created_at
+      - customer
+      - deleted_at
+      - id
+      - plate
+      - updated_at
+    WorkOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        totals:
+          type: string
+          readOnly: true
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkOrderService'
+          readOnly: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkOrderItem'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        code:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status281Enum'
+        private_note:
+          type: string
+          nullable: true
+        customer_complaint:
+          type: string
+          nullable: true
+        diagnosis_note:
+          type: string
+          nullable: true
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        delivered_at:
+          type: string
+          format: date-time
+          nullable: true
+        company:
+          type: integer
+          readOnly: true
+        customer:
+          type: integer
+        vehicle:
+          type: integer
+        assigned_mechanic:
+          type: integer
+          nullable: true
+      required:
+      - code
+      - company
+      - created_at
+      - customer
+      - deleted_at
+      - id
+      - items
+      - services
+      - totals
+      - updated_at
+      - vehicle
+    WorkOrderCreateUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        code:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status281Enum'
+        private_note:
+          type: string
+          nullable: true
+        customer_complaint:
+          type: string
+          nullable: true
+        diagnosis_note:
+          type: string
+          nullable: true
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        delivered_at:
+          type: string
+          format: date-time
+          nullable: true
+        company:
+          type: integer
+          readOnly: true
+        customer:
+          type: integer
+        vehicle:
+          type: integer
+        assigned_mechanic:
+          type: integer
+          nullable: true
+      required:
+      - code
+      - company
+      - created_at
+      - customer
+      - deleted_at
+      - id
+      - updated_at
+      - vehicle
+    WorkOrderItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        unit_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        total_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        provided_by:
+          $ref: '#/components/schemas/ProvidedByEnum'
+        supplier_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        purchase_date:
+          type: string
+          format: date
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        work_order:
+          type: integer
+      required:
+      - created_at
+      - deleted_at
+      - id
+      - name
+      - total_cost
+      - unit_cost
+      - updated_at
+      - work_order
+    WorkOrderService:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        name_snapshot:
+          type: string
+          readOnly: true
+        description_snapshot:
+          type: string
+          readOnly: true
+          nullable: true
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        total_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        notes:
+          type: string
+          nullable: true
+        work_order:
+          type: integer
+        service:
+          type: integer
+          nullable: true
+      required:
+      - created_at
+      - deleted_at
+      - description_snapshot
+      - id
+      - name_snapshot
+      - total_price
+      - unit_price
+      - updated_at
+      - work_order
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
