@@ -1,57 +1,104 @@
-# App Taller Mecánico API
+# Auto Repair Shop API
 
-API multi-tenant (SaaS) para la gestión de talleres mecánicos, construida con Django 5 y DRF.
+Multi-tenant SaaS API for auto repair shop management. Built with **Django 5**, **Django REST Framework**, and **PostgreSQL**.
 
-## Características
-- Autenticación JWT.
-- Multi-empresa: `SUPER_ADMIN` gestiona empresas; el negocio queda aislado por `company`.
-- Roles de tenant: Admin, Secretary, Mechanic, Customer.
-- Clientes, Vehículos y Catálogo de Servicios por empresa.
-- Órdenes de Trabajo con snapshots de servicios e ítems.
-- Presupuestos con generación de PDF y conversión a órdenes.
-- Recibos con pagos parciales y generación de PDF.
-- Dashboard de estadísticas por empresa.
+Companion frontend: [auto-repair-shop-front](https://github.com/jlrodriguezalvarado/auto-repair-shop-front)
 
-## Endpoints Principales
-- **/api/users/**: Usuarios y tokens.
-- **/api/companies/**: CRUD de empresas (`SUPER_ADMIN` only).
-- **/api/company/**: Mi empresa del tenant autenticado.
-- **/api/customers/profiles/**: Gestión de clientes.
-- **/api/vehicles/vehicles/**: Gestión de vehículos.
-- **/api/catalog/services/**: Catálogo de servicios.
-- **/api/work-orders/orders/**: Órdenes de trabajo.
-- **/api/estimates/estimates/**: Presupuestos.
-- **/api/receipts/receipts/**: Recibos y pagos.
-- **/api/dashboard/summary/**: Estadísticas.
+## Why this project
 
-## Documentación
-- Swagger UI: `/api/schema/swagger-ui/`
-- ReDoc: `/api/schema/redoc/`
+Portfolio / production-shaped backend that shows how I structure real features end to end:
 
-## Wipe + migrate + seed (local, breaking multi-tenant)
+- Tenant isolation by `company` with role-based access (`SUPER_ADMIN`, Admin, Secretary, Mechanic, Customer)
+- JWT auth, OpenAPI (Swagger / ReDoc), soft-delete patterns
+- Domain modules: customers, vehicles, service catalog, work orders, estimates (PDF), receipts & partial payments, dashboard
+- Docker local workflow + production image / Compose deploy under Traefik
+- Agent-assisted delivery kit (`.agents/`, dated plans, QA gate) documenting how work is planned and verified
 
-La migración multi-tenant es **breaking**. En local, recrea la BD antes de migrar:
+## Stack
+
+| Layer | Choice |
+|-------|--------|
+| Runtime | Python 3.12, Django 5, DRF, SimpleJWT |
+| DB | PostgreSQL 16 |
+| Docs | drf-spectacular |
+| PDF | ReportLab |
+| Deploy | Docker, Gunicorn, optional S3 media, Web Push (VAPID) |
+
+## Quick start (local)
+
+Requires Docker and a shared Postgres on network `dev-tools` (see `docker-tools` / `DOCKER_TOOLS_DIR`).
 
 ```bash
-# Desde auto-repair-shop-api (contenedor en marcha)
-docker exec -it mechanics_api_app python manage.py flush --noinput
-# O drop/recreate del schema en Postgres compartido, por ejemplo:
-# docker exec -it tools_postgres psql -U postgres -c "DROP DATABASE IF EXISTS mechanics_api;"
-# docker exec -it tools_postgres psql -U postgres -c "CREATE DATABASE mechanics_api;"
+cp --update=none .env.example .env
+./start.sh
+```
 
+API default: `http://localhost:8001`
+
+- Swagger: `/api/schema/swagger-ui/`
+- ReDoc: `/api/schema/redoc/`
+
+Seed demo data (after migrate):
+
+```bash
+docker exec -it mechanics_api_app python manage.py seed_data
+```
+
+| User | Password | Role |
+|------|----------|------|
+| `superadmin` | `superadmin123` | `SUPER_ADMIN` |
+| `admin` | `admin123` | `ADMIN` |
+| `secretary` | `sec123` | `SECRETARY` |
+| `mechanic` | `mech123` | `MECHANIC` |
+
+Seed passwords are **demo-only**. Never reuse them outside local.
+
+## Main endpoints
+
+- `/api/users/` — users & JWT (`/token/`, `/users/me/`, change password)
+- `/api/companies/` — companies (`SUPER_ADMIN`)
+- `/api/company/` — current tenant company
+- `/api/customers/profiles/` — customers
+- `/api/vehicles/vehicles/` — vehicles
+- `/api/catalog/services/` — service catalog
+- `/api/work-orders/orders/` — work orders
+- `/api/estimates/estimates/` — estimates + PDF
+- `/api/receipts/receipts/` — receipts & payments
+- `/api/dashboard/summary/` — tenant stats
+
+## Architecture notes
+
+```text
+apps/
+  company/     tenant model
+  users/       auth, roles, tenancy
+  customers/ vehicles/ catalog/
+  work_orders/ estimates/ receipts/
+  dashboard/   selectors for summary KPIs
+config/        settings (local / production)
+deploy/        production Compose, backup/restore
+```
+
+Multi-tenant migrations are **breaking** for older single-tenant DBs. Prefer wipe + migrate + seed locally (see below).
+
+```bash
+docker exec -it mechanics_api_app python manage.py flush --noinput
 docker exec -it mechanics_api_app python manage.py migrate --noinput
 docker exec -it mechanics_api_app python manage.py seed_data
 ```
 
-## Credenciales seed
+## Production deploy
 
-| Usuario | Password | Rol | Empresa |
-|---------|----------|-----|---------|
-| `superadmin` | `superadmin123` | `SUPER_ADMIN` | — |
-| `admin` | `admin123` | `ADMIN` | Taller Mecánico Demo |
-| `secretary` | `sec123` | `SECRETARY` | Taller Mecánico Demo |
-| `mechanic` | `mech123` | `MECHANIC` | Taller Mecánico Demo |
+See [DEPLOY.md](DEPLOY.md). Copy `deploy/.env.example` → server `.env` with real secrets. Never commit `.env`, PEMs, or registry credentials.
 
-```bash
-docker exec -it mechanics_api_app python manage.py seed_data
-```
+## Working style (agents & plans)
+
+This repo includes `.agents/` policies and `.plans/` dated feature plans used with Cursor agents (`django-api`, `qa`). That kit is intentional: contracts first, then implementation, then an independent QA pass.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+## Security
+
+See [SECURITY.md](SECURITY.md).
