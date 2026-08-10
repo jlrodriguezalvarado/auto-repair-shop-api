@@ -37,7 +37,7 @@ fi
 
 : "${DB_USER:?DB_USER must be set in .env}"
 : "${POSTGRES_DB:?POSTGRES_DB must be set in .env}"
-BACKUP_DIR="${BACKUP_DIR:-/srv/backups/mechanics}"
+BACKUP_DIR="${BACKUP_DIR:-${ROOT}/backups}"
 BACKUP_KEEP_DAILY="${BACKUP_KEEP_DAILY:-7}"
 BACKUP_KEEP_MONTHLY="${BACKUP_KEEP_MONTHLY:-3}"
 STAMP="$(date +%Y%m%d-%H%M%S)"

@@ -31,7 +31,7 @@ if [[ -f "$ENV_FILE" ]]; then
   set +a
 fi
 
-REGISTRY_HOST="${REGISTRY_HOST:-registry.lumuscore.com}"
+REGISTRY_HOST="${REGISTRY_HOST:-registry.example.com}"
 API_IMAGE="${API_IMAGE:-mechanics/api}"
 APP_VERSION="${APP_VERSION:-$(git rev-parse --short HEAD)}"
 PUSH=0

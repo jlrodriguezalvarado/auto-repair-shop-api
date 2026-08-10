@@ -84,7 +84,7 @@ resolve_docker_tools_dir() {
   fi
   local candidates=(
     "${ROOT_DIR}/../../docker-tools"
-    "/home/jlrodriguez/projects/docker-tools"
+    "${HOME}/projects/docker-tools"
   )
   local c
   for c in "${candidates[@]}"; do
@@ -114,7 +114,7 @@ check_port "$APP_PORT" "mechanics_api_app" "API"
 
 if ! DOCKER_TOOLS_DIR="$(resolve_docker_tools_dir)"; then
   echo "[start] ERROR: docker-tools not found." >&2
-  echo "[start] Clone/create it at /home/jlrodriguez/projects/docker-tools or set DOCKER_TOOLS_DIR." >&2
+  echo "[start] Clone/create docker-tools next to this workspace, or set DOCKER_TOOLS_DIR." >&2
   exit 1
 fi
 echo "[start] Using docker-tools at ${DOCKER_TOOLS_DIR}"

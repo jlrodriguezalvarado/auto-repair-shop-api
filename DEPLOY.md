@@ -1,40 +1,40 @@
-# Deploy — auto-repair-shop-api (Traefik + registry privado)
+# Deploy — auto-repair-shop-api (Traefik + private registry)
 
-Publica **mechanics/api** y el Compose que también sirve **mechanics/web** sobre
-`secure-docker-infrastructure` (Traefik, Let's Encrypt, registry privado).
+Publishes **mechanics/api** and the Compose stack that also serves **mechanics/web**
+behind a reverse proxy (Traefik, Let's Encrypt, private registry).
 
-| Componente | Imagen | Host |
+| Component | Image | Host |
 |---|---|---|
-| API | `registry.lumuscore.com/mechanics/api:<git-sha>` | `mechanicsapi.lumuscore.com` |
-| Front | `registry.lumuscore.com/mechanics/web:<git-sha>` | `mechanics.lumuscore.com` |
+| API | `registry.example.com/mechanics/api:<git-sha>` | `mechanicsapi.example.com` |
+| Front | `registry.example.com/mechanics/web:<git-sha>` | `mechanics.example.com` |
 
-## Local vs producción
+## Local vs production
 
-| | Local | Producción |
+| | Local | Production |
 |---|---|---|
-| Dónde | `docker-compose.yml` + `docker-tools` | `deploy/compose.production.yml` en `/opt/apps/mechanics` |
-| Imagen API | `django-runtime` + bind-mount | `mechanics/api:${APP_VERSION}` |
-| Front | `npm start` en `auto-repair-shop-front` | imagen solo-`dist` |
-| DB | `tools_postgres` | servicio `db` del stack |
+| Where | `docker-compose.yml` + shared `docker-tools` | `deploy/compose.production.yml` on `/opt/apps/mechanics` |
+| API image | `django-runtime` + bind-mount | `mechanics/api:${APP_VERSION}` |
+| Front | `npm start` in `auto-repair-shop-front` | `dist`-only image |
+| DB | shared Postgres (`tools_postgres`) | `db` service in the stack |
 
-## Flujo
+## Flow
 
-Desde la raíz del workspace `mechanics/`:
+From the workspace root `mechanics/`:
 
 ```bash
 ./build-api.sh
 ./build-front.sh
-./upload.sh          # o ./upload.sh all la primera vez
+./upload.sh          # or ./upload.sh all the first time
 ```
 
-En el servidor:
+On the server:
 
 ```bash
 cd /opt/apps/mechanics
 ./deploy.sh
 ```
 
-## Layout servidor
+## Server layout
 
 ```text
 /opt/apps/mechanics/
@@ -47,24 +47,24 @@ cd /opt/apps/mechanics
   secrets/
 ```
 
-CORS del API debe permitir el origen del front. No uses el Compose de producción para desarrollo local.
+API CORS must allow the front origin. Do not use the production Compose file for local development.
 
 ## Web Push (VAPID)
 
-1. Generar claves (máquina local, con `pywebpush`):
+1. Generate keys (local machine, with `pywebpush`):
 
 ```bash
 vapid --gen
 vapid --applicationServerKey -k private_key.pem
 ```
 
-2. En el servidor:
+2. On the server:
 
 ```bash
 sudo install -m 600 private_key.pem /opt/apps/mechanics/secrets/vapid_private.pem
 ```
 
-3. En `/opt/apps/mechanics/.env`:
+3. In `/opt/apps/mechanics/.env`:
 
 ```bash
 WEB_PUSH_VAPID_PUBLIC_KEY=<public key from applicationServerKey>
@@ -72,4 +72,4 @@ WEB_PUSH_VAPID_PRIVATE_KEY_FILE=/run/secrets/vapid_private.pem
 WEB_PUSH_VAPID_SUBJECT=mailto:admin@example.com
 ```
 
-Compose monta `./secrets:/run/secrets:ro`. Sin el PEM, el envío push se omite (log warning).
+Compose mounts `./secrets:/run/secrets:ro`. Without the PEM, push delivery is skipped (warning in logs).

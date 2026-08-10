@@ -4,7 +4,7 @@
 # Run on the server from /opt/apps/mechanics.
 #
 # Usage:
-#   ./restore.sh /srv/backups/mechanics/mechanics-api-YYYYMMDD-HHMMSS.dump
+#   ./restore.sh ./backups/mechanics-api-YYYYMMDD-HHMMSS.dump
 #   ./restore.sh /path/to/dump.sql
 #   ./restore.sh --yes /path/to/dump.sql   # skip confirmation
 set -Eeuo pipefail

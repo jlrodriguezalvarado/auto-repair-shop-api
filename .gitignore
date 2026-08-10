@@ -1,7 +1,7 @@
 __pycache__/
-<<<<<<< HEAD
 *.py[cod]
 *$py.class
+*.pyc
 .env
 .env.deploy
 .env.docker
@@ -10,6 +10,7 @@ env/
 venv/
 ENV/
 db.sqlite3
+*.sqlite3
 media/
 staticfiles/
 .vscode/
@@ -18,10 +19,8 @@ logs/*
 *.sql
 *.pem
 *.log
-=======
-*.pyc
-.env
-db.sqlite3
-staticfiles/
-media/
->>>>>>> 57e364fbf09a38203cf48b12a33136d53157d211
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
