@@ -1,0 +1,59 @@
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.local"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = "-ra --strict-markers"
+testpaths = ["apps"]
+filterwarnings = [
+  "ignore::DeprecationWarning",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["apps"]
+omit = [
+  "*/migrations/*",
+  "*/tests/*",
+  "*/admin.py",
+  "*/apps.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+fail_under = 0
+exclude_lines = [
+  "pragma: no cover",
+  "raise NotImplementedError",
+  "if TYPE_CHECKING:",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["apps", "config"]
+extend-exclude = [
+  "venv",
+  ".venv",
+  "staticfiles",
+  "**/migrations/**",
+]
+
+[tool.ruff.lint]
+# Focused starter set for green CI on legacy code. Expand later with `ruff check --fix`.
+# Import sorting (I) omitted until a gradual isort pass; Ruff can still format new files.
+select = [
+  "E9",
+  "F63",
+  "F7",
+  "F82",
+]
+ignore = []
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "config"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
