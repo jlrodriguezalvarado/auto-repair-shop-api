@@ -5,7 +5,7 @@ from decimal import Decimal
 def add_service_to_work_order(work_order, service, quantity=1, unit_price=None, notes=None):
     if unit_price is None:
         unit_price = service.base_price
-
+    unit_price = Decimal(str(unit_price))
     return WorkOrderService.objects.create(
         work_order=work_order,
         service=service,
@@ -13,15 +13,18 @@ def add_service_to_work_order(work_order, service, quantity=1, unit_price=None, 
         description_snapshot=service.description,
         quantity=quantity,
         unit_price=unit_price,
-        notes=notes
+        total_price=unit_price * quantity,
+        notes=notes,
     )
 
 def add_item_to_work_order(work_order, name, unit_cost, quantity=1, provided_by="workshop", **kwargs):
+    unit_cost = Decimal(str(unit_cost))
     return WorkOrderItem.objects.create(
         work_order=work_order,
         name=name,
         unit_cost=unit_cost,
         quantity=quantity,
+        total_cost=unit_cost * quantity,
         provided_by=provided_by,
         **kwargs
     )

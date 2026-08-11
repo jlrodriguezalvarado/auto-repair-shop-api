@@ -143,5 +143,9 @@ echo "[start] Stack is up."
 "${COMPOSE[@]}" ps
 echo "[start] API: http://localhost:${APP_PORT}"
 echo "[start] Shared pgAdmin: http://localhost:5050 (docker-tools)"
-echo "[start] Logs: docker compose logs -f mechanics_api_app"
-docker exec -it mechanics_api_app bash
+echo "[start] Logs: ${COMPOSE[*]} logs -f mechanics_api_app"
+# Interactive shell for humans; for non-interactive bring-up use:
+#   docker compose -f docker-compose.yml up -d
+if [ -t 0 ] && [ -t 1 ]; then
+  docker exec -it mechanics_api_app bash
+fi
