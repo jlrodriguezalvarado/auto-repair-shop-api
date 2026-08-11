@@ -24,4 +24,5 @@ db.sqlite3
 .ruff_cache/
 htmlcov/
 .coverage
+*.pem
 docker/daemon.json.example

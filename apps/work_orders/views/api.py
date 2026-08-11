@@ -1,10 +1,17 @@
+from django.contrib.auth import get_user_model
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from apps.common.soft_delete import SoftDeleteViewSetMixin, soft_delete_schema_view
-from apps.common.tenancy import TenantQuerysetMixin, require_tenant_access, resolve_company_id, require_tenant_user
+from apps.common.tenancy import (
+    TenantQuerysetMixin,
+    require_tenant_access,
+    resolve_company_id,
+    require_tenant_user,
+    assert_same_company,
+)
 from apps.work_orders.models import WorkOrder, WorkOrderService, WorkOrderItem
 from apps.work_orders.serializers.api import (
     WorkOrderSerializer,
@@ -13,6 +20,8 @@ from apps.work_orders.serializers.api import (
     WorkOrderItemSerializer
 )
 from apps.users.permissions import IsAdministrator, IsSecretary, IsMechanic, IsCustomer, IsTenantUser
+
+User = get_user_model()
 
 @soft_delete_schema_view()
 class WorkOrderViewSet(SoftDeleteViewSetMixin, TenantQuerysetMixin, viewsets.ModelViewSet):
@@ -33,10 +42,11 @@ class WorkOrderViewSet(SoftDeleteViewSetMixin, TenantQuerysetMixin, viewsets.Mod
         base = [IsTenantUser()]
         if self.action == "hard_delete":
             return base + [IsAdministrator()]
-        if self.request.user.role == "MECHANIC":
-            return base + [IsMechanic()]
-        if self.request.user.role == "CUSTOMER":
-            return base + [IsCustomer()]
+        if self.action in ["list", "retrieve"]:
+            return base + [(IsAdministrator | IsSecretary | IsMechanic | IsCustomer)()]
+        if self.action == "change_status":
+            return base + [(IsAdministrator | IsSecretary | IsMechanic)()]
+        # create/update/destroy/assign_mechanic/restore: staff only
         return base + [(IsAdministrator | IsSecretary)()]
 
     def get_queryset(self):
@@ -64,7 +74,18 @@ class WorkOrderViewSet(SoftDeleteViewSetMixin, TenantQuerysetMixin, viewsets.Mod
         mechanic_id = request.data.get("mechanic_id")
         if not mechanic_id:
             return Response({"detail": "mechanic_id is required"}, status=status.HTTP_400_BAD_REQUEST)
-        work_order.assigned_mechanic_id = mechanic_id
+        try:
+            mechanic = User.objects.get(pk=mechanic_id)
+        except (User.DoesNotExist, TypeError, ValueError):
+            return Response({"detail": "Mechanic not found"}, status=status.HTTP_400_BAD_REQUEST)
+        if mechanic.role != User.Role.MECHANIC:
+            return Response({"detail": "User is not a mechanic"}, status=status.HTTP_400_BAD_REQUEST)
+        if mechanic.company_id != work_order.company_id:
+            return Response(
+                {"detail": "Mechanic belongs to another company"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        work_order.assigned_mechanic = mechanic
         work_order.save()
         from apps.notifications.services.domain_events import notify_work_order_assigned
         notify_work_order_assigned(work_order, actor=request.user)
@@ -105,7 +126,10 @@ class WorkOrderServiceViewSet(SoftDeleteViewSetMixin, viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         require_tenant_user(self.request.user)
-        service = serializer.validated_data["service"]
+        work_order = serializer.validated_data["work_order"]
+        assert_same_company(work_order, self.request.user.company_id, field_name="work_order")
+        service = serializer.validated_data.get("service")
+        assert_same_company(service, self.request.user.company_id, field_name="service")
         serializer.save(
             name_snapshot=service.name,
             description_snapshot=service.description,
@@ -139,6 +163,8 @@ class WorkOrderItemViewSet(SoftDeleteViewSetMixin, viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         require_tenant_user(self.request.user)
+        work_order = serializer.validated_data["work_order"]
+        assert_same_company(work_order, self.request.user.company_id, field_name="work_order")
         serializer.save()
 
     def perform_destroy(self, instance):
