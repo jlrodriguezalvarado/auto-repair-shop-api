@@ -43,15 +43,15 @@ Companion policies: `integration.md` (Angular consumer) and `qa.md` (final gate)
 Use the running Compose service when available:
 
 ```bash
-docker compose exec -T mechanics_api_app python manage.py check
-docker compose exec -T mechanics_api_app python manage.py makemigrations --check --dry-run
-docker compose exec -T mechanics_api_app python manage.py migrate --plan
-docker compose exec -T mechanics_api_app python manage.py spectacular --validate --file /tmp/openapi-validation.yaml
-docker compose exec -T mechanics_api_app python manage.py test <affected.apps> --keepdb --noinput
+docker compose -f docker-compose.yml exec -T mechanics_api_app python manage.py check
+docker compose -f docker-compose.yml exec -T mechanics_api_app python manage.py makemigrations --check --dry-run
+docker compose -f docker-compose.yml exec -T mechanics_api_app python manage.py migrate --plan
+docker compose -f docker-compose.yml exec -T mechanics_api_app python manage.py spectacular --validate --file /tmp/openapi-validation.yaml
+docker compose -f docker-compose.yml exec -T mechanics_api_app python manage.py test <affected.apps> --keepdb --noinput
 ```
 
 Before final QA, the global PostgreSQL suite must pass:
 
 ```bash
-docker compose exec -T mechanics_api_app python manage.py test --keepdb --noinput
+docker compose -f docker-compose.yml exec -T mechanics_api_app python manage.py test --keepdb --noinput
 ```

@@ -3,7 +3,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.http import HttpResponse
 from apps.common.soft_delete import SoftDeleteViewSetMixin, soft_delete_schema_view
-from apps.common.tenancy import TenantQuerysetMixin, require_tenant_access, resolve_company_id, require_tenant_user
+from apps.common.tenancy import (
+    TenantQuerysetMixin,
+    require_tenant_access,
+    resolve_company_id,
+    require_tenant_user,
+    assert_same_company,
+)
 from apps.estimates.models import Estimate, EstimateService, EstimateItem
 from apps.estimates.serializers.api import EstimateSerializer, EstimateServiceSerializer, EstimateItemSerializer
 from apps.estimates.services import calculate_estimate_totals, create_work_order_from_estimate
@@ -20,8 +26,11 @@ class EstimateViewSet(SoftDeleteViewSetMixin, TenantQuerysetMixin, viewsets.Mode
         base = [IsTenantUser()]
         if self.action == "hard_delete":
             return base + [IsAdministrator()]
-        if self.request.user.is_authenticated and self.request.user.role == "CUSTOMER":
-            return base + [IsCustomer()]
+        if self.action in ["list", "retrieve", "pdf"]:
+            return base + [(IsAdministrator | IsSecretary | IsCustomer)()]
+        if self.action == "approve":
+            # Intentional product behavior: customers may approve their estimate
+            return base + [(IsAdministrator | IsSecretary | IsCustomer)()]
         return base + [(IsAdministrator | IsSecretary)()]
 
     def get_queryset(self):
@@ -102,7 +111,10 @@ class EstimateServiceViewSet(SoftDeleteViewSetMixin, viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         require_tenant_user(self.request.user)
+        estimate = serializer.validated_data["estimate"]
+        assert_same_company(estimate, self.request.user.company_id, field_name="estimate")
         service = serializer.validated_data["service"]
+        assert_same_company(service, self.request.user.company_id, field_name="service")
         instance = serializer.save(
             name_snapshot=service.name,
             description_snapshot=service.description,
@@ -144,6 +156,8 @@ class EstimateItemViewSet(SoftDeleteViewSetMixin, viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         require_tenant_user(self.request.user)
+        estimate = serializer.validated_data["estimate"]
+        assert_same_company(estimate, self.request.user.company_id, field_name="estimate")
         instance = serializer.save()
         calculate_estimate_totals(instance.estimate)
 
