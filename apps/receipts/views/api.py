@@ -3,7 +3,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.http import HttpResponse
 from apps.common.soft_delete import SoftDeleteViewSetMixin, soft_delete_schema_view
-from apps.common.tenancy import TenantQuerysetMixin, require_tenant_access, resolve_company_id, require_tenant_user
+from apps.common.tenancy import (
+    TenantQuerysetMixin,
+    require_tenant_access,
+    resolve_company_id,
+    require_tenant_user,
+    assert_same_company,
+)
 from apps.receipts.models import Receipt, ReceiptService, ReceiptItem
 from apps.receipts.serializers.api import ReceiptSerializer, ReceiptServiceSerializer, ReceiptItemSerializer
 from apps.receipts.services import calculate_receipt_totals, add_payment_to_receipt
@@ -20,8 +26,9 @@ class ReceiptViewSet(SoftDeleteViewSetMixin, TenantQuerysetMixin, viewsets.Model
         base = [IsTenantUser()]
         if self.action == "hard_delete":
             return base + [IsAdministrator()]
-        if self.request.user.is_authenticated and self.request.user.role == "CUSTOMER":
-            return base + [IsCustomer()]
+        if self.action in ["list", "retrieve", "pdf"]:
+            return base + [(IsAdministrator | IsSecretary | IsCustomer)()]
+        # create/update/destroy/add_payment/persist_pdf/restore: staff only
         return base + [(IsAdministrator | IsSecretary)()]
 
     def get_queryset(self):
@@ -96,7 +103,10 @@ class ReceiptServiceViewSet(SoftDeleteViewSetMixin, viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         require_tenant_user(self.request.user)
+        receipt = serializer.validated_data["receipt"]
+        assert_same_company(receipt, self.request.user.company_id, field_name="receipt")
         service = serializer.validated_data["service"]
+        assert_same_company(service, self.request.user.company_id, field_name="service")
         instance = serializer.save(
             name_snapshot=service.name,
             description_snapshot=service.description,
@@ -138,6 +148,8 @@ class ReceiptItemViewSet(SoftDeleteViewSetMixin, viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         require_tenant_user(self.request.user)
+        receipt = serializer.validated_data["receipt"]
+        assert_same_company(receipt, self.request.user.company_id, field_name="receipt")
         instance = serializer.save()
         calculate_receipt_totals(instance.receipt)
 

@@ -1,4 +1,4 @@
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import SAFE_METHODS
 
 SUPER_ADMIN_ROLE = "SUPER_ADMIN"
@@ -70,6 +70,48 @@ def is_super_admin_company_viewer(request) -> bool:
     if company_id is None:
         return False
     return company_exists(company_id)
+
+def assert_same_company(obj, company_id, *, field_name: str = "non_field_errors"):
+    """Raise ValidationError if obj is from another company. None is allowed (optional FK)."""
+    if obj is None:
+        return
+    obj_company_id = getattr(obj, "company_id", None)
+    if obj_company_id is None:
+        raise ValidationError({field_name: "Related object has no company."})
+    if obj_company_id != company_id:
+        raise ValidationError({field_name: "Related object belongs to another company."})
+
+class TenantForeignKeyValidatorMixin:
+    """Reject cross-tenant FK attachments on create/update.
+    Set tenant_fk_fields to serializer attr names (e.g. customer, vehicle, service).
+    Company is taken from request.user (writes) or from the existing instance.
+    """
+    tenant_fk_fields = ()
+
+    def _tenant_company_id(self):
+        instance = getattr(self, "instance", None)
+        if instance is not None and getattr(instance, "company_id", None):
+            return instance.company_id
+        request = self.context.get("request")
+        if request is None or not getattr(request, "user", None):
+            return None
+        return getattr(request.user, "company_id", None)
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        company_id = self._tenant_company_id()
+        if company_id is None:
+            return attrs
+        for field_name in self.tenant_fk_fields:
+            if field_name not in attrs:
+                continue
+            assert_same_company(attrs[field_name], company_id, field_name=field_name)
+        customer = attrs.get("customer")
+        vehicle = attrs.get("vehicle")
+        if customer is not None and vehicle is not None:
+            if vehicle.customer_id != customer.id:
+                raise ValidationError({"vehicle": "Vehicle does not belong to the selected customer."})
+        return attrs
 
 class TenantQuerysetMixin:
     """Scope querysets by resolved company. SUPER_ADMIN may read with X-Company-Id; writes deny SUPER_ADMIN.
