@@ -34,6 +34,10 @@ Companion policies: `integration.md` (Angular consumer) and `qa.md` (final gate)
 
 ## Security and observability
 
+- Never interpolate user input into SQL. Use the ORM, `params=` on extra/raw, or bound placeholders. `extra(where=[f"...{user}"])` is forbidden.
+- Escape LIKE wildcards (`%`, `_`, `\\`) in user-supplied contains searches; Django `__icontains` still treats `%`/`_` as wildcards.
+- Validate writes with serializers. Public/unauthenticated writes need explicit serializers (and rate limits where neighboring endpoints do).
+- Client storage (localStorage) is not authorization: lock submitted/terminal resources on the server.
 - Never weaken production settings, secrets validation, host/CORS checks, secure cookies, health semantics, or request-ID propagation.
 - Do not expose exception strings, credentials, internal connection details, or private objects in responses or logs.
 - Liveness has no dependencies; readiness checks required dependencies without leaking configuration.

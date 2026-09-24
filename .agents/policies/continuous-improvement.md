@@ -41,6 +41,7 @@ Do **not** invent process for one-off typos or unique product decisions.
 | QA skipped or weak evidence | `policies/qa.md` (keep aligned with auto-repair-shop-front) |
 | Repeated command omission | `policies/django-api.md` verification section or HANDOFF “Commands expected” |
 | Cursor-session habit | `.cursor/rules/workflow.mdc` or a focused `.mdc` |
+| Reinvented helper that already exists (normalize, match, price, sharing) | Reuse/extend the existing Util/service; delete the duplicate; short Safeguards or policy pointer if missing |
 
 ## Sibling and parent
 
@@ -51,6 +52,7 @@ Do **not** invent process for one-off typos or unique product decisions.
 ## Anti-patterns
 
 - Fixing only the feature code and hoping memory holds.
+- Reimplementing an existing Util/service helper in a new call site instead of reusing or extending it.
 - Duplicating the same rule in three places; one clear SoT plus a short pointer is enough.
 - Weakening tests or deleting checks to “pass”.
 - Writing long essays; defenses must be short and actionable.

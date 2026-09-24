@@ -34,6 +34,8 @@ cd /opt/apps/mechanics
 ./deploy.sh
 ```
 
+`deploy.sh` pulls images, migrates, then rolling-replaces `api` and `web` (old replica stays in Traefik until the new one is ready). Do **not** use `docker compose up -d` by hand to change image tags. Migrations run while the previous API replica is still serving; keep them backward compatible.
+
 ## Server layout
 
 ```text

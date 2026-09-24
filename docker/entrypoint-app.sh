@@ -11,4 +11,4 @@ fi
 if [ "${RUN_COLLECTSTATIC:-1}" = "1" ]; then
   python manage.py collectstatic --noinput
 fi
-exec gunicorn -b 0.0.0.0:8000 --workers "${GUNICORN_WORKERS:-2}" --timeout 60 config.wsgi:application
+exec gunicorn -b 0.0.0.0:8000 --workers "${GUNICORN_WORKERS:-2}" --timeout 60 --graceful-timeout 25 config.wsgi:application

@@ -8,6 +8,7 @@ alwaysApply: true
 - Before planning or implementing, read `.agents/WORKFLOW.md` and the approved file under `.plans/`.
 - Sibling consumer: `../auto-repair-shop-front` (Angular). Prefer changes that reduce API↔frontend friction.
 - Do not implement while a plan awaits approval. After approval, record `.plans/YYYY-MM-DD-<slug>.md` from `.plans/TEMPLATE.md`.
+- Non-trivial work: `feature/<kebab-slug>` from `develop` as Jose (`jlrodriguez`), local or cloud, same name on both repos. Do not implement on `develop`. Merge to `develop` only when the user authorizes.
 - Cross features: store the plan here (contract owner) with Scope cross; implement API first, then adapt the front.
 - Delegate API work to `django-api` using `.agents/HANDOFF.md`. After integration, run `qa`.
 - Do not push, merge, deploy, or run production migrations unless the user explicitly authorizes it.

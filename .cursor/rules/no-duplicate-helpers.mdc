@@ -1,0 +1,15 @@
+---
+description: Never reimplement existing helpers — search, reuse, or extend shared modules
+alwaysApply: true
+---
+
+# No duplicate helpers — reuse first
+
+Before writing normalize/match/lookup/price/sharing (or any domain helper), **search** the codebase for an existing Util, service, shared module, or neighboring helper.
+
+- **Reuse** the existing API when it fits.
+- **Extend** that shared module if the behavior is incomplete.
+- **Do not** copy-paste or reimplement the same logic in a new call site (`LiveTrackingInvoiceUtil` reinventing `CarSharingUtil`, etc.).
+- Private wrappers that only orchestrate a shared Util are fine; private copies of normalize/query logic are not.
+
+Failure class for harness: “Reinvented helper that already exists.”

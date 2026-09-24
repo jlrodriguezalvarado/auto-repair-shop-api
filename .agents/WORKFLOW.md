@@ -11,6 +11,10 @@ Create `.plans/YYYY-MM-DD-<slug>.md` (America/Caracas) from `.plans/TEMPLATE.md`
 - API-only: `Repositories: auto-repair-shop-api`
 - Cross (API + front): `Repositories: both` / `Scope: cross` — still stored here (contract owner). Frontend work is delegated via sibling `../auto-repair-shop-front` or by opening the parent `mechanics/` workspace.
 
+## Open a feature branch
+
+Unless the change is trivial (typo, comment, one-file docs) and does not warrant a plan: create or checkout `feature/<kebab-slug>` from up-to-date `develop` in each affected repo (same slug on API and front). Work as Jose (`jlrodriguez`) locally or in the cloud (`cloud_base_branch` = that feature, never `develop`). Do not implement on `develop`. Merge to `develop` only after QA and explicit authorization.
+
 ## 3. Implement by ownership
 
 - Use the `django-api` subagent (`.cursor/agents/django-api.md`) for API writes.

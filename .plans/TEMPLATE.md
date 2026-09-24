@@ -4,10 +4,23 @@
 - Status: awaiting-approval | approved | implementing | qa | completed | blocked
 - Repositories: auto-repair-shop-api | auto-repair-shop-front | both
 - Approved by: <user/reference>
+- Branch: `feature/<kebab-slug>` from `develop` (same name on every affected repo; Jose / `jlrodriguez`, local or cloud)
+- Merge target: `develop` after QA, only when authorized (never implement on `develop`)
 
 ## Context and outcome
 
 <Why this is needed and the observable user outcome.>
+
+## Knowledge constraints (from jose-knowledge-base)
+
+Cloud/remote agents usually **cannot** read `~/projects/jose-knowledge-base`. Distill **only what this task needs** (do not paste the whole vault):
+
+- Global rules that apply (e.g. no `window.confirm`/`alert` for business UI; reuse existing helpers; OpenAPI/Swagger local-only — never on deployed development/production)
+- This product's conventions from local `AGENTS.md` / `.agents/`
+- Relevant patterns, anti-patterns, and ADRs
+- Explicit non-goals if they constrain this change
+
+If the vault repo is attached to the cloud job, cite note names instead of pasting.
 
 ## Scope
 

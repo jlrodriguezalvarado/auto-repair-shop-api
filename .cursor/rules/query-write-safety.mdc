@@ -1,0 +1,14 @@
+---
+description: Parameterized queries and validated writes — no SQL interpolation, no trusting client lock state
+alwaysApply: true
+---
+
+# Query and write safety
+
+- Never interpolate user input into SQL. Use the ORM, `params=` on extra/raw, or bound placeholders. `extra(where=[f"...{user}"])` is forbidden.
+- Escape LIKE wildcards (`%`, `_`, `\`) in user-supplied contains searches. Django `__icontains` still treats `%`/`_` as wildcards.
+- Validate writes with serializers. Public/unauthenticated writes need explicit serializers.
+- Reject writes after a terminal status (e.g. already submitted). Client storage is UX, not authorization.
+- Do not expose SQL, exception strings, or schema details in API errors.
+
+Failure class for harness: “User input interpolated into SQL or public write left unvalidated.”

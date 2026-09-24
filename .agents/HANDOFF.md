@@ -4,6 +4,7 @@ Include this block (filled in) when delegating to `django-api` or `qa`.
 
 ```text
 Plan: .plans/YYYY-MM-DD-<slug>.md
+Branch: feature/<kebab-slug> (from develop; same name on sibling repos; Jose / jlrodriguez, local or cloud)
 Role: django-api | qa
 Sibling: this repo (Django API) <-> ../auto-repair-shop-front (Angular)
 Scope:
